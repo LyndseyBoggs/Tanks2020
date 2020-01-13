@@ -1,11 +1,21 @@
-﻿using System.Collections;
+﻿/*
+ *  Programmer: Lyndsey Boggs
+ *  Date: January 2020
+ *  Summary: This script controls the movement of the tank, which are called from the Input Controller
+ */
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//This script requires a TankData component. 
+//Create one if none exists
+[RequireComponent(typeof(TankData))]
+
 public class TankMotor : MonoBehaviour
 {
-    private CharacterController characterController;
-    private TankData data;
+    private CharacterController characterController; //stores the character controller component from this game object
+    private TankData data; // stores the TankData component on this object
     
     // Start is called before the first frame update
     void Start()
@@ -20,8 +30,8 @@ public class TankMotor : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Move(3);
-        Rotate(180);
+        //Move(3); //testing Move(), comment out
+        //Rotate(180); //testing Rotate(), comment out
     }
 
     //Move the tank forwards and backwards
@@ -42,6 +52,7 @@ public class TankMotor : MonoBehaviour
     }
 
     //Rotates the tank left and right
+    //Positive speed rotates right, negative speed rotates left
     public void Rotate(float speed)
     {
         // Create a vector to hold our rotation data
