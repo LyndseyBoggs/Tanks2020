@@ -6,6 +6,9 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public GameObject playerTank; //holds reference to Player tank
+    public GameObject[] enemyTanks; //holds references to enemy tanks
+
     // Runs before any Start() functions run
     void Awake()
     {
