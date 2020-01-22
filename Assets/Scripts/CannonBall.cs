@@ -5,22 +5,33 @@ using UnityEngine;
 public class CannonBall : MonoBehaviour
 {
     public float damage;
-    private Rigidbody rb;
+    public float lifeTime = 3.0f;
 
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Rigidbody>();
+        
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //Destroy cannonball after lifetime
+        lifeTime -= Time.deltaTime; //subtract the time passed each frame
+
+        //when life is over, destroy object
+        if (lifeTime <= 0) 
+        {
+            Destroy(this.gameObject);
+        }
     }
 
-    public void ApplyForce(Vector3 force)
+    //Destroy Cannonball on collision with any object
+    void OnCollisionEnter(Collision collision)
     {
-        rb.AddForce(force);
+        //If collides with anything, destroy
+        Destroy(this.gameObject);
     }
+
+
 }

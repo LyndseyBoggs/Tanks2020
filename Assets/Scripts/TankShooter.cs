@@ -17,10 +17,10 @@ public class TankShooter : MonoBehaviour
 
     public void Shoot()
     {
-        //Instantiate bullet
-        GameObject myCannonBall = Instantiate(cannonBall, firePoint.transform);
+        //Instantiate cannonball in world space
+        GameObject myCannonBall = Instantiate(cannonBall, firePoint.transform.position, firePoint.transform.rotation);
 
-        //Apply Force
-        myCannonBall.SendMessage("ApplyForce", data.transform.forward); //might need to be fixed
+        //Apply Force to the rigidbody of the cannonball
+        myCannonBall.GetComponent<Rigidbody>().AddForce(transform.forward * data.shellForce, ForceMode.Impulse); //might need to be fixed
     }
 }

@@ -40,7 +40,7 @@ public class TankData : MonoBehaviour
     //
     public void Die()
     {
-        //This is what happens when the player dies
+        //This is what happens when the tank dies
         Destroy(this.gameObject);
     }
 
