@@ -472,6 +472,8 @@ MonoBehaviour:
   - {fileID: 680554303}
   currentWayPoint: 0
   closeEnough: 0.5
+  loopType: 2
+  isPingpongForward: 1
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
