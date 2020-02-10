@@ -15,6 +15,7 @@ public class TankData : MonoBehaviour
 
     public float health; 
     public float maxHealth = 10;
+    public float healthRegenPerSec = 5.0f;
 
     public int score = 0; //Q: Can I make this an unsigned int to prevent it from dropping into the neg.?
 
