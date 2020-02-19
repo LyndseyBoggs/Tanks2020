@@ -120,6 +120,44 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!1 &41428895 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2393371722937406956, guid: 302ee9fceb584654a9b1d7f6e07ee763,
+    type: 3}
+  m_PrefabInstance: {fileID: 2393371723546807138}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &41428896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41428895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 055bffddbf594264bae172bc798a1129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CheatPowerUp:
+    speedMod: 5
+    healthMod: 5
+    maxHealthMod: 0
+    fireRateMod: 0
+    duration: 10
+    isPermanent: 0
+--- !u!114 &41428897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 41428895}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6646829cdb7642a4eb57634f88199ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Powerups: []
 --- !u!1 &95515622
 GameObject:
   m_ObjectHideFlags: 0
