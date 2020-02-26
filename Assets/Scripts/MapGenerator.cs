@@ -1,10 +1,17 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 //using System.Numerics;
 using UnityEngine;
 
 public class MapGenerator : MonoBehaviour
 {
+    public enum MapType {MapOfTheDay, Random, Seeded}   //Type of map to generate
+
+    public MapType mapType = MapType.Random; //public variable to store user selection, defaulted to Random
+
+    public int mapSeed;     //Designer-friendly variable to input specific map seed
+
     public int MapRows = 3;
     public int MapCols = 3;
 
@@ -18,6 +25,25 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        switch (mapType)
+        {
+            case MapType.MapOfTheDay:
+                mapSeed = DateToInt(DateTime.Now.Date); //use the current date 
+                break;
+
+            case MapType.Random:
+                mapSeed = DateToInt(DateTime.Now); //use the current exact time (now)
+                break;
+
+            case MapType.Seeded:
+                //Do nothing, mapSeed is already set to user input
+                break;
+
+            default:
+                Debug.Log("[MapGenerator] Map type not implemented");
+                break;
+        }
+        
         //Generate the grid on start
         GenerateGrid();
     }
@@ -31,12 +57,26 @@ public class MapGenerator : MonoBehaviour
     //Return a room prefab game object at random
     public GameObject GetRandomRoom()
     {
-        return roomPrefabs[Random.Range(0, roomPrefabs.Length)];
+        return roomPrefabs[UnityEngine.Random.Range(0, roomPrefabs.Length)];
     }
+
+    public int DateToInt(DateTime dateToUse)
+    {
+        //Return the exact time (down to the millisecond) added together
+        return dateToUse.Year + 
+               dateToUse.Month + 
+               dateToUse.Day + 
+               dateToUse.Hour + 
+               dateToUse.Minute +
+               dateToUse.Millisecond;
+    }
+
 
     //Randomly generate the grid for the level
     public void GenerateGrid()
     {
+        UnityEngine.Random.seed = mapSeed;
+
         grid = new Room[MapCols,MapRows];
         
         //for each row

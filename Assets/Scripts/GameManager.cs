@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     public GameObject playerTank; //holds reference to Player tank
-    public GameObject[] enemyTanks; //holds references to enemy tanks
+    public GameObject[] enemyTanks; //holds array of references to enemy tanks
+    public List<Transform> enemySpawnPoints; //list of enemy spawnpoints
 
     // Runs before any Start() functions run
     void Awake()
