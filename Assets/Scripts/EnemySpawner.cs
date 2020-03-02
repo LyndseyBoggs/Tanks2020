@@ -8,13 +8,13 @@ public class EnemySpawner : MonoBehaviour
     void Start()
     {
         //Add this spawner to the game manager list of enemy spawn points
-        GameManager.instance.enemySpawnPoints.Add(this.transform);
+        GameManager.instance.enemySpawnPoints.Add(this.gameObject);
     }
 
     void OnDestroy()
     {
         //Remove this spawner to the game manager list of enemy spawn points
-        GameManager.instance.enemySpawnPoints.Remove(this.transform);
+        GameManager.instance.enemySpawnPoints.Remove(this.gameObject);
     }
 
     // Update is called once per frame

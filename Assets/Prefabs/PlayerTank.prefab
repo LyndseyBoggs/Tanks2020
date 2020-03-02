@@ -375,8 +375,10 @@ GameObject:
   - component: {fileID: 738306770151492737}
   - component: {fileID: 2302006463778361097}
   - component: {fileID: 2439144458202126709}
+  - component: {fileID: 41428896}
+  - component: {fileID: 41428897}
   m_Layer: 0
-  m_Name: Tank
+  m_Name: PlayerTank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -448,6 +450,7 @@ MonoBehaviour:
   canShoot: 1
   health: 0
   maxHealth: 10
+  healthRegenPerSec: 5
   score: 0
 --- !u!114 &2302006463778361097
 MonoBehaviour:
@@ -477,6 +480,38 @@ MonoBehaviour:
   cannonBall: {fileID: 3233708176373263285, guid: e4c1726318ca88947aa09feb09c0da9f,
     type: 3}
   firePoint: {fileID: 2040533737629155003}
+--- !u!114 &41428896
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2393371722937406956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 055bffddbf594264bae172bc798a1129, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  CheatPowerUp:
+    speedMod: 5
+    healthMod: 5
+    maxHealthMod: 0
+    fireRateMod: 0
+    duration: 10
+    isPermanent: 0
+--- !u!114 &41428897
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2393371722937406956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6646829cdb7642a4eb57634f88199ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Powerups: []
 --- !u!1 &2393371722937406958
 GameObject:
   m_ObjectHideFlags: 0

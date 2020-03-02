@@ -14,6 +14,7 @@ public class InputController : MonoBehaviour
     private TankData data;
     private TankMotor motor;
     private TankShooter shooter;
+    private bool isMoving = false; //track if player is doing movement input
     
     public enum InputScheme
     {
@@ -59,55 +60,79 @@ public class InputController : MonoBehaviour
 
 
         //Movement Controls
+
+        isMoving = false; //player is not moving this frame unless movement input is pressed
+
         switch (input)
         {
             case InputScheme.WASD:
+                //Forward [W]
                 if (Input.GetKey(KeyCode.W))
                 {
                     motor.Move(data.moveSpeed);
+                    isMoving = true;
                 }
 
+                //Reverse [D]
                 if (Input.GetKey(KeyCode.S))
                 {
                     //TODO: Reverse Speed
 
                     motor.Move(-data.moveSpeed);
+                    isMoving = true;
                 }
 
+                //Turn Right [D]
                 if (Input.GetKey(KeyCode.D))
                 {
                     motor.Rotate(data.rotateSpeed);
                 }
 
+                //Turn Left [A]
                 if (Input.GetKey(KeyCode.A))
                 {
                     motor.Rotate(-data.rotateSpeed);
                 }
+
                 break;
 
             case InputScheme.arrowKeys:
+                //Forward [UP ARROW]
                 if (Input.GetKey(KeyCode.UpArrow))
                 {
                     motor.Move(data.moveSpeed);
+                    isMoving = true;
                 }
 
+                //Reverse [DOWN ARROW]
                 if (Input.GetKey(KeyCode.DownArrow))
                 {
                     //TODO: Reverse Speed
 
                     motor.Move(-data.moveSpeed);
+                    isMoving = true;
                 }
 
+                //Turn Right [RIGHT ARROW]
                 if (Input.GetKey(KeyCode.RightArrow))
                 {
                     motor.Rotate(data.rotateSpeed);
                 }
 
+                //Turn left [LEFT ARROW]
                 if (Input.GetKey(KeyCode.LeftArrow))
                 {
                     motor.Rotate(-data.rotateSpeed);
                 }
+
                 break;
+        }
+
+        //If the tank is not moving, pass a speed of 0
+        if (!isMoving)
+        {
+            //Pass a speed of 0 to the Simple Move Controller so physics are still detected
+            motor.Move(0.0f);
         }
     }
 }
