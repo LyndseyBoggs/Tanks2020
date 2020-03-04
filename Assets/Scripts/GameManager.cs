@@ -8,11 +8,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
-    public GameObject instantiatedPlayerTank; //holds reference to Player tank
-    public GameObject playerTankPrefab; //the prefab we want to use to spawn the player
-    public GameObject[] enemyTanks; //holds array of references to enemy tanks
-    public List<GameObject> playerSpawnPoints;
-    public List<GameObject> enemySpawnPoints; //list of enemy spawnpoints
+    public GameObject LevelGameObject;
+
+    public GameObject instantiatedPlayerTank;       //holds reference to Player tank
+    public GameObject playerTankPrefab;             //the prefab we want to use to spawn the player
+    public List<GameObject> instantiatedEnemyTanks; //list of all enemy tanks currently instantiated
+    public List<GameObject> enemyTankPrefabs;       //Designer list of enemy tanks to instantiate
+    public List<GameObject> playerSpawnPoints;      //list of player spawn points
+    public List<GameObject> enemySpawnPoints;       //list of enemy spawn points
 
     // Runs before any Start() functions run
     void Awake()
@@ -43,7 +46,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    private GameObject RandomSpawnPoint(List<GameObject> spawnPoints)
+    public GameObject RandomSpawnPoint(List<GameObject> spawnPoints)
     {
         //Get a random int along the list of spawn point indices
         int spawnToGet = UnityEngine.Random.Range(0, spawnPoints.Count - 1);
@@ -63,5 +66,24 @@ public class GameManager : MonoBehaviour
 
         //Spawn the player at that spawnpoint location
         instantiatedPlayerTank = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+    }
+
+    public void SpawnEnemies()
+    {
+        //If the list of enemy prefabs is not empty
+        if (enemyTankPrefabs.Count != 0)
+        {
+            for (int i = 0; i < enemyTankPrefabs.Count; i++)
+            {
+                //Create a new enemy tank in the world from the list
+                GameObject instantiatedEnemyTank =
+                    Instantiate(enemyTankPrefabs[i], RandomSpawnPoint(enemySpawnPoints).transform.position, Quaternion.identity);
+
+                //Add to list of instantiated enemy tanks
+                instantiatedEnemyTanks.Add(instantiatedEnemyTank);
+            }
+        }
+
+        
     }
 }

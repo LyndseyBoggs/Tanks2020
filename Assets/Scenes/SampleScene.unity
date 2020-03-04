@@ -258,7 +258,11 @@ MonoBehaviour:
   instantiatedPlayerTank: {fileID: 0}
   playerTankPrefab: {fileID: 2393371722937406956, guid: 302ee9fceb584654a9b1d7f6e07ee763,
     type: 3}
-  enemyTanks: []
+  instantiatedEnemyTanks: []
+  enemyTankPrefabs:
+  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
+  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
+  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
   playerSpawnPoints: []
   enemySpawnPoints: []
 --- !u!1 &324278309
@@ -1082,8 +1086,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   mapType: 0
   mapSeed: 10
-  MapRows: 5
-  MapCols: 5
+  MapRows: 2
+  MapCols: 2
   roomPrefabs:
   - {fileID: 121816, guid: 41d4243be8ad3a5409422171976de7ff, type: 3}
   - {fileID: 2802534798057151779, guid: f741f311e88834441850c1f6d3e218a9, type: 3}

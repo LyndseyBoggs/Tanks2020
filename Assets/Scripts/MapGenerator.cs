@@ -25,6 +25,9 @@ public class MapGenerator : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        //This is the level game object
+        GameManager.instance.LevelGameObject = this.gameObject;
+
         switch (mapType)
         {
             case MapType.MapOfTheDay:
@@ -46,6 +49,12 @@ public class MapGenerator : MonoBehaviour
         
         //Generate the grid on start
         GenerateGrid();
+
+        //Spawn Player
+        GameManager.instance.SpawnPlayer(GameManager.instance.RandomSpawnPoint(GameManager.instance.playerSpawnPoints));
+
+        //Spawn Enemies
+        GameManager.instance.SpawnEnemies();
     }
 
     // Update is called once per frame
