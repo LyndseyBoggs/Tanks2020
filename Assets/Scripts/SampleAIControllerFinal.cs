@@ -8,18 +8,17 @@ using UnityEngine;
 
 public class SampleAIControllerFinal : MonoBehaviour
 {
-    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest}
-
     public enum Personalities { Inky, Pinky, Blinky, Clyde}
     public Personalities personality = Personalities.Inky;
 
+    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest }
     public AIState aiState = AIState.Chase;
     private float stateEnterTime;
-    private float healthGainPerSec = 0.5f;
-
+    
     public float hearingDistance = 25.0f;
     public float FOVAngle = 45.0f;
     public float inSightAngle = 10.0f;
+    public float fleeTime = 15.0f;      //How long the tank should flee before checking to exit Flee
 
     public enum AvoidanceStage
     { None, Rotate, Move };
@@ -32,7 +31,8 @@ public class SampleAIControllerFinal : MonoBehaviour
     private TankData data;
     private TankMotor motor;
     private Transform tf;
-    public GameObject player;
+    public GameObject player;       //used to manually chase player in current version.
+                                    //Will need to update to get player from GameManager
 
     public Transform target;
 
@@ -48,37 +48,75 @@ public class SampleAIControllerFinal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        //Run a specific finite state machine in update depending on AI personality
         switch (personality)
         {
             case Personalities.Inky:
+                Inky();     //Run Inky FSM
                 break;
 
             case Personalities.Blinky:
+                Blinky();   //Run Blinky FSM
                 break;
 
             case Personalities.Pinky:
+                Pinky();    //Run Pinky FSM
                 break;
 
             case Personalities.Clyde:
+                Clyde();    //Run Clyde FSM
                 break;
 
             default:
+                Debug.Log("AI Personality not implemented");
                 break;
         }
 
 
     }
 
+    //TODO: Implement Player is In Range
     private bool playerIsInRange()
     {
-        //If player is close enough to shoot and we are aiming at player
+        //If player is close enough to shoot and we are aiming at player (get distance)
         return true;
     }
 
+    //Detect whether the tank can move by detecting obstacles in the path ahead
+    public bool CanMove(float speed)
+    {
+        RaycastHit hit; //create raycast to store our hit data
+
+        //
+        if (Physics.Raycast(tf.position, tf.forward, out hit, speed))
+        {
+            //If our hit is not the player
+            if (!hit.collider.CompareTag("Player"))
+            {
+                //Something is blocking us, return false
+                return false;
+            }
+        }
+
+        //Nothing is blocking us, return true
+        return true;
+    }
+
+    //Change to a new AI state
+    public void ChangeState(AIState newState)
+    {
+        //chase our state 
+        aiState = newState;
+
+        //save time we changed states
+        stateEnterTime = Time.time;
+    }
+
+    //Chase a target object
     private void Chase(GameObject target)
     {
         //Face my target
-        motor.RotateTowards(target.position, data.rotateSpeed);
+        motor.RotateTowards(target.transform.position, data.rotateSpeed);
 
         //If I can move, move forward
         if (CanMove(data.moveSpeed))
@@ -94,101 +132,21 @@ public class SampleAIControllerFinal : MonoBehaviour
         }
     }
 
+    //Flee from a target object
+    //TODO: Implement Flee
+    private void Flee(GameObject fleeFromObject)
+    {
+        throw new NotImplementedException();
+    }
+
+    //Fire a bullet from the tank
+    //TODO: Implement Shoot
     private void Shoot()
     {
 
     }
 
-    private void Inky()
-    {
-        switch (aiState)
-        {
-            case AIState.Chase:
-                //Chase(player);
-                if (data.health < (data.maxHealth * 0.5))
-                {
-                    ChangeState(AIState.CheckForFlee);
-                }
-
-                else if (playerIsInRange())
-                {
-                    ChangeState(AIState.ChaseAndFire);
-                }
-                break;
-
-            case AIState.ChaseAndFire:
-                //do state behaviors
-                Chase(player);
-                Shoot();
-
-                //check for transitions in the order of priority
-                if (!playerIsInRange())
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
-
-            case AIState.CheckForFlee:
-                if (playerIsInRange())
-                {
-                    ChangeState(AIState.Flee);
-                }
-
-                else
-                {
-                    ChangeState(AIState.Rest);
-                }
-                break;
-
-            case AIState.Flee:
-                //Flee from player
-                Flee(player);
-
-                //wait 30 seconds then check for flee
-                if (stateEnterTime >= stateEnterTime + 30.0f)
-                {
-                    ChangeState(AIState.CheckForFlee);
-                }
-                break;
-
-            case AIState.Rest:
-                Rest();
-                if (playerIsInRange())
-                {
-                    ChangeState(AIState.Flee);
-                }
-
-                //if approximately fully healed
-                else if (Mathf.Approximately(data.health, data.maxHealth))
-                {
-                    ChangeState(AIState.Chase);
-                }
-                break;
-
-            default:
-                Debug.Log("Inky AI State not implemented");
-                break;
-
-
-        }
-    }
-
-    private void Blinky()
-    {
-        //TODO: 
-        Debug.Log("Blinky is not implemented");
-    }
-
-    private void Pinky()
-    {
-        Debug.Log("Pinky is not implemented");
-    }
-
-    private void Clyde()
-    {
-        Debug.Log("Clyde is not implemented");
-    }
-
+    //Heal tank over time
     private void Rest()
     {
         //If tank is less than max health
@@ -208,50 +166,21 @@ public class SampleAIControllerFinal : MonoBehaviour
             }
 
         }
-        
+
     }
 
-    private void Flee(GameObject player)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void ChangeState (AIState newState)
-    {
-        //chase our state 
-        aiState = newState;
-
-        //save time we changed states
-        stateEnterTime = Time.time;
-    }
-
-    public bool CanMove(float speed)
-    {
-        RaycastHit hit; //create raycast to store our hit data
-
-        //
-        if (Physics.Raycast(tf.position, tf.forward, out hit, speed))
-        {
-            //If our hit is not the player
-            if (!hit.collider.CompareTag("Player"))
-            {
-                //Something is blocking us, return false
-                return false;
-            }
-        }
-
-
-        return true;
-    }
-
-    //Avoid whatever obstacle is in the way
+    //Avoid whatever obstacle is in the way using Avoidance FSM
     private void Avoid()
     {
+        //FSM of avoidance states
         switch (avoidanceStage)
         {
+            //---NO AVOIDANCE STATE---
             case AvoidanceStage.None:
+                //Do nothing
                 break;
 
+            //---ROTATE TO AVOID STATE---
             case AvoidanceStage.Rotate:
                 //Begin rotating
                 motor.Rotate(data.rotateSpeed); //causes the tank to turn to the right each time
@@ -267,6 +196,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                 }
                 break;
 
+            //---MOVE TO AVOID STATE---
             case AvoidanceStage.Move:
                 //If we can move, move until end of timer
                 if (CanMove(data.moveSpeed))
@@ -292,4 +222,118 @@ public class SampleAIControllerFinal : MonoBehaviour
                 break;
         }
     }
+
+    //-------------------------------------------------------
+    //  Personality FMS
+    //-------------------------------------------------------
+    //Inky Personality FSM called from Update
+    private void Inky()
+    {
+        switch (aiState)
+        {
+            //---CHASE STATE---
+            case AIState.Chase:
+                //Chase the player
+                Chase(player);
+
+                //Check for transitions
+                //-----------------------------------
+                //If health is less than half capacity
+                if (data.health < (data.maxHealth * 0.5))
+                {
+                    //Check for flee
+                    ChangeState(AIState.CheckForFlee);
+                }
+
+                //Else if player is in range
+                else if (playerIsInRange())
+                {
+                    //Chase and fire at the player
+                    ChangeState(AIState.ChaseAndFire);
+                }
+                break;
+
+            //--CHASE AND FIRE STATE---
+            case AIState.ChaseAndFire:
+                //do state behaviors
+                Chase(player);
+                Shoot();
+
+                //check for transitions in the order of priority
+                if (!playerIsInRange())
+                {
+                    ChangeState(AIState.Chase);
+                }
+                break;
+
+            //--CHECK FOR FLEE STATE---
+            case AIState.CheckForFlee:
+                if (playerIsInRange())
+                {
+                    ChangeState(AIState.Flee);
+                }
+
+                else
+                {
+                    ChangeState(AIState.Rest);
+                }
+                break;
+
+            //---FLEE SATE---
+            case AIState.Flee:
+                //Flee from player
+                Flee(player);
+
+                //wait 30 seconds then check for flee
+                if (Time.time >= (stateEnterTime + fleeTime))
+                {
+                    ChangeState(AIState.CheckForFlee);
+                }
+                break;
+
+            //---REST STATE---
+            case AIState.Rest:
+                Rest();
+                if (playerIsInRange())
+                {
+                    ChangeState(AIState.Flee);
+                }
+
+                //if approximately fully healed
+                else if (Mathf.Approximately(data.health, data.maxHealth))
+                {
+                    ChangeState(AIState.Chase);
+                }
+                break;
+
+            //--DEFAULT---
+            default:
+                Debug.Log("Inky AI State not implemented");
+                break;
+
+        }
+    }
+
+    //Blinky Personality FSM called from Update
+    //TODO: Blinky FSM
+    private void Blinky()
+    {
+        //TODO: 
+        Debug.Log("Blinky is not implemented");
+    }
+
+    //Pinky Personality FSM called from Update
+    //TODO: Pinky FSM
+    private void Pinky()
+    {
+        Debug.Log("Pinky is not implemented");
+    }
+
+    //TODO: Clyde FSM
+    //Clyde Personality FSM called from Update
+    private void Clyde()
+    {
+        Debug.Log("Clyde is not implemented");
+    }
+    
 }
