@@ -60,6 +60,7 @@ public class InputController : MonoBehaviour
 
 
         //Movement Controls
+        //----------------------------------------------
 
         isMoving = false; //player is not moving this frame unless movement input is pressed
 

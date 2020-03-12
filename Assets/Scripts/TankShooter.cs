@@ -20,6 +20,9 @@ public class TankShooter : MonoBehaviour
         //Instantiate cannonball in world space
         GameObject myCannonBall = Instantiate(cannonBall, firePoint.transform.position, firePoint.transform.rotation);
 
+        //Track that THIS tank created THIS cannonball
+        myCannonBall.GetComponent<CannonBall>().ShooterTank = data.gameObject;
+
         //Apply Force to the rigidbody of the cannonball
         myCannonBall.GetComponent<Rigidbody>().AddForce(transform.forward * data.shellForce, ForceMode.Impulse); //might need to be fixed
     }

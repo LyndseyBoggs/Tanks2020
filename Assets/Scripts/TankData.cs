@@ -12,6 +12,7 @@ public class TankData : MonoBehaviour
 
     public float timeUntilCanShoot = 1.5f;
     public bool canShoot = true;
+    public GameObject lastShotBy;   //tracks the last tank to shoot this tank
 
     public float health; 
     public float maxHealth = 10;
