@@ -18,7 +18,7 @@ public class SampleAIControllerFinal : MonoBehaviour
 
     public Transform[] waypoints;
     public int currentWayPoint = 0;
-    public float closeEnough;
+    public float closeEnough = 0.5f;
     public enum LoopType {Stop, Loop, Pingpong }
     public LoopType loopType;
     public bool isPingpongForward = true; //tracks if tank is pingponging forward or backward.
@@ -59,31 +59,39 @@ public class SampleAIControllerFinal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Run a specific finite state machine in update depending on AI personality
-        switch (personality)
+        //If in avoidance state, do avoidance
+        if (avoidanceStage != AvoidanceStage.None)
         {
-            case Personalities.Inky:
-                Inky();     //Run Inky FSM
-                break;
-
-            case Personalities.Blinky:
-                Blinky();   //Run Blinky FSM
-                break;
-
-            case Personalities.Pinky:
-                Pinky();    //Run Pinky FSM
-                break;
-
-            case Personalities.Clyde:
-                Clyde();    //Run Clyde FSM
-                break;
-
-            default:
-                Debug.Log("AI Personality not implemented");
-                break;
+            Avoid();
         }
 
+        //Else --> Run a specific finite state machine in update depending on AI personality
+        else
+        {
+            switch (personality)
+            {
+                case Personalities.Inky:
+                    Inky();     //Run Inky FSM
+                    break;
 
+                case Personalities.Blinky:
+                    Blinky();   //Run Blinky FSM
+                    break;
+
+                case Personalities.Pinky:
+                    Pinky();    //Run Pinky FSM
+                    break;
+
+                case Personalities.Clyde:
+                    Clyde();    //Run Clyde FSM
+                    break;
+
+                default:
+                    Debug.Log("AI Personality not implemented");
+                    break;
+            }
+        }
+        
     }
 
     //TODO: Implement Player is In Range
@@ -93,27 +101,7 @@ public class SampleAIControllerFinal : MonoBehaviour
         //use FOVAngle and inSightAngle
         return true;
     }
-
-    //Detect whether the tank can move by detecting obstacles in the path ahead
-    public bool CanMove(float speed)
-    {
-        RaycastHit hit; //create raycast to store our hit data
-
-        //If the raycast returns an object hit
-        if (Physics.Raycast(tf.position, tf.forward, out hit, speed))
-        {
-            //If our hit is not the player
-            if (!hit.collider.CompareTag("Player"))
-            {
-                //Something is blocking us, return false
-                return false;
-            }
-        }
-
-        //Nothing is blocking us, return true
-        return true;
-    }
-
+    
     //Change to a new AI state
     public void ChangeState(AIState newState)
     {
@@ -132,11 +120,22 @@ public class SampleAIControllerFinal : MonoBehaviour
         {
             //Do Nothing!
         }
-
-        //Move forward
+        
+        //Try to move forward or enter avoidance
         else
         {
-            motor.Move(data.moveSpeed);
+            //If I can move, move forward    
+            if (CanMove(data.feelDistance))
+            {
+                motor.Move(data.moveSpeed);
+            }
+
+            //Else I can't move, avoid the obstacle
+            else
+            {
+                //Rotate until we can move
+                avoidanceStage = AvoidanceStage.Rotate;
+            }
         }
 
         //If close enough to the waypoint, progress
@@ -164,9 +163,6 @@ public class SampleAIControllerFinal : MonoBehaviour
                     //else, we are at end of waypoint list
                     else
                     {
-                        //if pingpong
-
-                        //if loop
                         currentWayPoint = 0; // return to first waypoint
                     }
                     break;
@@ -228,15 +224,14 @@ public class SampleAIControllerFinal : MonoBehaviour
         }
     }
 
-
-    //Chase a target object
+    //Chase a target object [HAS OBSTACLE AVOIDANCE]
     private void Chase(GameObject target)
     {
         //Face my target
         motor.RotateTowards(target.transform.position, data.rotateSpeed);
 
         //If I can move, move forward
-        if (CanMove(data.moveSpeed))
+        if (CanMove(data.feelDistance))
         {
             motor.Move(data.moveSpeed);
         }
@@ -249,7 +244,7 @@ public class SampleAIControllerFinal : MonoBehaviour
         }
     }
 
-    //Flee from a target object
+    //Flee from a target object [HAS OBSTACLE AVOIDANCE]
     private void Flee(GameObject target)
     {
         //The vector from enemy to target is the difference of target pos. minus our pos.
@@ -269,9 +264,19 @@ public class SampleAIControllerFinal : MonoBehaviour
 
         //Rotate towards the flee position
         motor.RotateTowards(fleePosition, data.rotateSpeed);
+        
+        //If I can move, move forward    
+        if (CanMove(data.feelDistance))
+        {
+            motor.Move(data.moveSpeed);
+        }
 
-        //move forward
-        motor.Move(data.moveSpeed);
+        //Else I can't move, avoid the obstacle
+        else
+        {
+            //Rotate until we can move
+            avoidanceStage = AvoidanceStage.Rotate;
+        }
     }
 
     //Fire a bullet from the tank
@@ -279,6 +284,8 @@ public class SampleAIControllerFinal : MonoBehaviour
     {
         //Call Shoot() from Tank's TankShooter component
         shooter.Shoot();
+
+        //TODO: implement cooldown
     }
 
     //Heal tank over time
@@ -302,6 +309,26 @@ public class SampleAIControllerFinal : MonoBehaviour
 
         }
 
+    }
+
+    //Detect whether the tank can move by detecting obstacles in the path ahead
+    public bool CanMove(float feelDist)
+    {
+        RaycastHit hit; //create raycast to store our hit data
+
+        //If the raycast returns an object hit
+        if (Physics.Raycast(tf.position, tf.forward, out hit, feelDist))
+        {
+            //If our hit is not the player
+            if (!hit.collider.CompareTag("Player"))
+            {
+                //Something is blocking us, return false
+                return false;
+            }
+        }
+
+        //Nothing is blocking us, return true
+        return true;
     }
 
     //Avoid whatever obstacle is in the way using Avoidance FSM
@@ -369,8 +396,6 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---CHASE STATE---
             case AIState.Chase:
                 //Chase the player
-                //TODO: Integrate obstacle avoidance
-
                 Chase(player);
 
                 //Check for transitions
@@ -463,7 +488,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     //TODO: Pinky FSM
     private void Pinky()
     {
-        Debug.Log("Pinky is not implemented");
+        Patrol();
     }
 
     //TODO: Clyde FSM

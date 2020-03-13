@@ -301,6 +301,7 @@ MonoBehaviour:
   fireRate: 1
   shellForce: 20
   shellDmg: 1
+  feelDistance: 4
   timeUntilCanShoot: 1.5
   canShoot: 1
   lastShotBy: {fileID: 0}

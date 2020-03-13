@@ -462,7 +462,7 @@ GameObject:
   - component: {fileID: 41428897}
   m_Layer: 0
   m_Name: PlayerTank
-  m_TagString: Untagged
+  m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -530,6 +530,7 @@ MonoBehaviour:
   fireRate: 1
   shellForce: 40
   shellDmg: 1
+  feelDistance: 7
   timeUntilCanShoot: 1.5
   canShoot: 1
   lastShotBy: {fileID: 0}
