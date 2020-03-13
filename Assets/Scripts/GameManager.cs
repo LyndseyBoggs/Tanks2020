@@ -42,7 +42,18 @@ public class GameManager : MonoBehaviour
         //If the player tank does not exist
         if (instantiatedPlayerTank == null)
         {
-            SpawnPlayer(RandomSpawnPoint(playerSpawnPoints));
+            //if the list of player spawn points is not empty
+            if (playerSpawnPoints.Count != 0)
+            {
+                //Spawn the player at a spawn point
+                SpawnPlayer(RandomSpawnPoint(playerSpawnPoints));
+            }
+
+            else
+            {
+                Debug.Log("Could not spawn the player at spawn point: Spawn point list is empty.");
+            }
+            
         }
     }
 
@@ -65,7 +76,16 @@ public class GameManager : MonoBehaviour
         }
 
         //Spawn the player at that spawnpoint location
-        instantiatedPlayerTank = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+        if (playerTankPrefab != null)   //null check for playerTankPrefab
+        {
+            instantiatedPlayerTank = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+        }
+
+        else
+        {
+            Debug.Log("Player Tank Prefab not assigned in Game Manager");
+        }
+        
     }
 
     public void SpawnEnemies()

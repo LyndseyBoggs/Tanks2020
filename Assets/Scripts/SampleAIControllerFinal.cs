@@ -5,36 +5,42 @@ using UnityEngine;
 
 [RequireComponent(typeof(TankData))]
 [RequireComponent(typeof(TankMotor))]
+[RequireComponent(typeof(TankShooter))]
 
 public class SampleAIControllerFinal : MonoBehaviour
 {
     public enum Personalities { Inky, Pinky, Blinky, Clyde}
     public Personalities personality = Personalities.Inky;
 
-    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest }
+    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest, Patrol }
     public AIState aiState = AIState.Chase;
     private float stateEnterTime;
-    
-    public float hearingDistance = 25.0f;
-    public float FOVAngle = 45.0f;
-    public float inSightAngle = 10.0f;
-    public float fleeTime = 15.0f;      //How long the tank should flee before checking to exit Flee
 
-    public enum AvoidanceStage
-    { None, Rotate, Move };
+    public Transform[] waypoints;
+    public int currentWayPoint = 0;
+    public float closeEnough;
+    public enum LoopType {Stop, Loop, Pingpong }
+    public LoopType loopType;
+    public bool isPingpongForward = true; //tracks if tank is pingponging forward or backward.
 
-    public AvoidanceStage avoidanceStage;
-    public float avoidanceTime = 2.0f;
+    public float playerRangeDist = 5.0f;    //the distance in which "Player in Range" should return true
+    public float fleeDistance = 8.0f;       //the distance to which the tank will try to flee from player
+    public float hearingDistance = 25.0f;   //Distance at which tank can hear sounds
+    public float FOVAngle = 45.0f;          //Total sight angle
+    public float inSightAngle = 10.0f;      //Smaller angle so tank can "aim" at player w/ this angle
+    public float fleeTime = 15.0f;          //How long the tank should flee before checking to exit Flee
 
-    private float exitTime;
+    public enum AvoidanceStage { None, Rotate, Move };              //States of avoidance
+    public AvoidanceStage avoidanceStage = AvoidanceStage.None;     //current state of avoidance, default to none
+    public float avoidanceTime = 2.0f;                              //The time the tank should move forward to try to avoid and obstacle
+    private float exitTime;                                         //Tracks exit time timer in avoidance states
 
-    private TankData data;
-    private TankMotor motor;
-    private Transform tf;
+    private TankData data;          //This tank's TankData
+    private TankMotor motor;        //This tank's TankMotor
+    private TankShooter shooter;    //This tank's Shooter
+    private Transform tf;           //This tank's Transform
     public GameObject player;       //used to manually chase player in current version.
                                     //Will need to update to get player from GameManager
-
-    public Transform target;
 
     // Start is called before the first frame update
     void Start()
@@ -43,6 +49,11 @@ public class SampleAIControllerFinal : MonoBehaviour
         data = GetComponent<TankData>();
         motor = GetComponent<TankMotor>();
         tf = GetComponent<Transform>();
+        shooter = GetComponent<TankShooter>();
+
+        //get reference to manager player (temporary until next milestone)
+        player = GameManager.instance.instantiatedPlayerTank;
+
     }
 
     // Update is called once per frame
@@ -79,6 +90,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     private bool playerIsInRange()
     {
         //If player is close enough to shoot and we are aiming at player (get distance)
+        //use FOVAngle and inSightAngle
         return true;
     }
 
@@ -87,7 +99,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     {
         RaycastHit hit; //create raycast to store our hit data
 
-        //
+        //If the raycast returns an object hit
         if (Physics.Raycast(tf.position, tf.forward, out hit, speed))
         {
             //If our hit is not the player
@@ -112,6 +124,111 @@ public class SampleAIControllerFinal : MonoBehaviour
         stateEnterTime = Time.time;
     }
 
+    //Patrol a set of waypoints
+    public void Patrol()
+    {
+        //If currently turning to look at waypoint
+        if (motor.RotateTowards(waypoints[currentWayPoint].position, data.rotateSpeed))
+        {
+            //Do Nothing!
+        }
+
+        //Move forward
+        else
+        {
+            motor.Move(data.moveSpeed);
+        }
+
+        //If close enough to the waypoint, progress
+        if (Vector3.SqrMagnitude(waypoints[currentWayPoint].position - tf.position) < (closeEnough * closeEnough))
+        {
+            switch (loopType)
+            {
+                case LoopType.Stop:
+                    //if next waypoint will not exceed the array (avoid index out of range)
+                    if (currentWayPoint + 1 < waypoints.Length)
+                    {
+                        //Target next waypoint
+                        currentWayPoint++;
+                    }
+                    break;
+
+                case LoopType.Loop:
+                    //if next waypoint will not exceed the array (avoid index out of range)
+                    if (currentWayPoint + 1 < waypoints.Length)
+                    {
+                        //Target next waypoint
+                        currentWayPoint++;
+                    }
+
+                    //else, we are at end of waypoint list
+                    else
+                    {
+                        //if pingpong
+
+                        //if loop
+                        currentWayPoint = 0; // return to first waypoint
+                    }
+                    break;
+
+                case LoopType.Pingpong:
+
+                    //PingPong Forward
+                    if (isPingpongForward == true)
+                    {
+                        //if next waypoint will not exceed the array (avoid index out of range)
+                        if (currentWayPoint + 1 < waypoints.Length)
+                        {
+                            //Target next waypoint
+                            currentWayPoint++;
+                        }
+
+                        //else, we are at end of waypoint list -> pingpong backwards now
+                        else
+                        {
+                            isPingpongForward = false;
+
+                            //if loop
+                            currentWayPoint--; // return to first waypoint
+                        }
+                    }
+
+                    //PingPong Backwards
+                    else
+                    {
+                        //if next waypoint will not exceed the array beginning(avoid index out of range)
+                        if (currentWayPoint - 1 >= 0)
+                        {
+                            //Target next reverse waypoint
+                            currentWayPoint--;
+                        }
+
+                        //else, we are at start of waypoint list -> pingpong forwards now
+                        else
+                        {
+                            isPingpongForward = true;
+
+                            //if loop
+                            currentWayPoint++; // return to first waypoint
+                        }
+                    }
+
+
+
+                    break;
+
+                default:
+                    Debug.Log("Loop type not implemented.");
+                    break;
+            }
+
+
+
+
+        }
+    }
+
+
     //Chase a target object
     private void Chase(GameObject target)
     {
@@ -133,17 +250,35 @@ public class SampleAIControllerFinal : MonoBehaviour
     }
 
     //Flee from a target object
-    //TODO: Implement Flee
-    private void Flee(GameObject fleeFromObject)
+    private void Flee(GameObject target)
     {
-        throw new NotImplementedException();
+        //The vector from enemy to target is the difference of target pos. minus our pos.
+        Vector3 vectorToTarget = target.transform.position - tf.position;
+
+        //Get vector away from target (Flip by -1)
+        Vector3 vectorAwayFromTarget = -1 * vectorToTarget;
+
+        //Normalize away vector (sets to a magnitude of 1)
+        vectorAwayFromTarget.Normalize();
+
+        //Multiply direction to run (vectorAway) by how far away to run (flee distance)
+        vectorAwayFromTarget *= fleeDistance;
+
+        //Locate flee location point in space relative to our position to seek
+        Vector3 fleePosition = vectorAwayFromTarget + tf.position;
+
+        //Rotate towards the flee position
+        motor.RotateTowards(fleePosition, data.rotateSpeed);
+
+        //move forward
+        motor.Move(data.moveSpeed);
     }
 
     //Fire a bullet from the tank
-    //TODO: Implement Shoot
     private void Shoot()
     {
-
+        //Call Shoot() from Tank's TankShooter component
+        shooter.Shoot();
     }
 
     //Heal tank over time
@@ -234,6 +369,8 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---CHASE STATE---
             case AIState.Chase:
                 //Chase the player
+                //TODO: Integrate obstacle avoidance
+
                 Chase(player);
 
                 //Check for transitions
@@ -284,7 +421,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                 //Flee from player
                 Flee(player);
 
-                //wait 30 seconds then check for flee
+                //wait "fleeTime" seconds then check for flee
                 if (Time.time >= (stateEnterTime + fleeTime))
                 {
                     ChangeState(AIState.CheckForFlee);
