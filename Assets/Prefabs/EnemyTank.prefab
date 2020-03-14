@@ -307,7 +307,7 @@ MonoBehaviour:
   lastShotBy: {fileID: 0}
   health: 0
   maxHealth: 10
-  healthRegenPerSec: 5
+  healthRegenPerSec: 0.5
   score: 0
 --- !u!114 &1101471605416782402
 MonoBehaviour:

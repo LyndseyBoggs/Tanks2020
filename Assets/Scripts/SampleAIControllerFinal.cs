@@ -9,19 +9,24 @@ using UnityEngine;
 
 public class SampleAIControllerFinal : MonoBehaviour
 {
-    public enum Personalities { Inky, Pinky, Blinky, Clyde}
-    public Personalities personality = Personalities.Inky;
+    public enum Personalities { Inky, Pinky, Blinky, Clyde}         //Tank Personities enum
+    public Personalities personality = Personalities.Inky;          //Designer-chosen personality of tank effects behavior in Update()
 
-    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest, Patrol }
-    public AIState aiState = AIState.Chase;
-    private float stateEnterTime;
+    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest, Patrol }   //enum of possible AI States
+    public AIState aiState = AIState.Chase;                         //current AI State of the tank
+    private float stateEnterTime;                                   //tracks the time the tank entered its current state
+
+    public enum AvoidanceStage { None, Rotate, Move };              //States of avoidance
+    public AvoidanceStage avoidanceStage = AvoidanceStage.None;     //current state of avoidance, default to none
+    public float avoidanceTime = 2.0f;                              //The time the tank should move forward to try to avoid and obstacle
+    private float exitTime;                                         //Tracks exit time timer in avoidance states
 
     public Transform[] waypoints;
     public int currentWayPoint = 0;
     public float closeEnough = 0.5f;
     public enum LoopType {Stop, Loop, Pingpong }
     public LoopType loopType;
-    public bool isPingpongForward = true; //tracks if tank is pingponging forward or backward.
+    public bool isPingpongForward = true;   //tracks if tank is pingponging forward or backward.
 
     public float playerRangeDist = 5.0f;    //the distance in which "Player in Range" should return true
     public float fleeDistance = 8.0f;       //the distance to which the tank will try to flee from player
@@ -29,11 +34,6 @@ public class SampleAIControllerFinal : MonoBehaviour
     public float FOVAngle = 45.0f;          //Total sight angle
     public float inSightAngle = 10.0f;      //Smaller angle so tank can "aim" at player w/ this angle
     public float fleeTime = 15.0f;          //How long the tank should flee before checking to exit Flee
-
-    public enum AvoidanceStage { None, Rotate, Move };              //States of avoidance
-    public AvoidanceStage avoidanceStage = AvoidanceStage.None;     //current state of avoidance, default to none
-    public float avoidanceTime = 2.0f;                              //The time the tank should move forward to try to avoid and obstacle
-    private float exitTime;                                         //Tracks exit time timer in avoidance states
 
     private TankData data;          //This tank's TankData
     private TankMotor motor;        //This tank's TankMotor
@@ -91,15 +91,34 @@ public class SampleAIControllerFinal : MonoBehaviour
                     break;
             }
         }
-        
+
+        //Handle the shooting cooldown timer
+        //If cooldown is greater than 0, count down each frame
+        if (data.timeUntilCanShoot > 0)
+        {
+            data.timeUntilCanShoot -= Time.deltaTime;
+        }
+
+        //Else cooldown is complete, Tank can shoot again
+        else
+        {
+            data.canShoot = true;
+        }
+
     }
 
-    //TODO: Implement Player is In Range
-    private bool playerIsInRange()
+   private bool playerIsInRange()
     {
         //If player is close enough to shoot and we are aiming at player (get distance)
         //use FOVAngle and inSightAngle
-        return true;
+
+        //If distance to player is less than range distance, return true
+        if (Vector3.Distance(tf.position, player.transform.position) <= playerRangeDist)
+        {
+            return true;
+        }
+
+        return false;
     }
     
     //Change to a new AI state
@@ -112,13 +131,13 @@ public class SampleAIControllerFinal : MonoBehaviour
         stateEnterTime = Time.time;
     }
 
-    //Patrol a set of waypoints
+    //Patrol a set of waypoints [HAS OBSTACLE AVOIDANCE]
     public void Patrol()
     {
         //If currently turning to look at waypoint
         if (motor.RotateTowards(waypoints[currentWayPoint].position, data.rotateSpeed))
         {
-            //Do Nothing!
+            //Do Nothing! Do not interrupt the rotating towards waypoint.
         }
         
         //Try to move forward or enter avoidance
@@ -138,8 +157,8 @@ public class SampleAIControllerFinal : MonoBehaviour
             }
         }
 
-        //If close enough to the waypoint, progress
-        if (Vector3.SqrMagnitude(waypoints[currentWayPoint].position - tf.position) < (closeEnough * closeEnough))
+        //If close enough to the waypoint, progress onward. 
+        if (Vector3.SqrMagnitude(waypoints[currentWayPoint].position - tf.position) < (closeEnough * closeEnough))  //Note: I think there may be issues with using SqrMagnitude, as the product of two decimals is smaller than its factors. Use numbers greater than 1
         {
             switch (loopType)
             {
@@ -225,6 +244,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     }
 
     //Chase a target object [HAS OBSTACLE AVOIDANCE]
+    //TODO: USe a similar function for Aim()
     private void Chase(GameObject target)
     {
         //Face my target
@@ -279,13 +299,27 @@ public class SampleAIControllerFinal : MonoBehaviour
         }
     }
 
-    //Fire a bullet from the tank
+    //Fire a bullet from the tank [NOW USES COOLDOWN]
     private void Shoot()
     {
         //Call Shoot() from Tank's TankShooter component
-        shooter.Shoot();
+        //shooter.Shoot();
 
-        //TODO: implement cooldown
+        //If the tank is able to shoot
+        if (data.canShoot)
+        {
+            //Shoot a bullet
+            shooter.Shoot();
+
+            //Set canShoot to false
+            data.canShoot = false;
+
+            //Reset cooldown until tank can shoot again
+            data.timeUntilCanShoot = data.fireRate;
+        }
+
+        //Note: Shooting cooldown timer is handled in Update()
+
     }
 
     //Heal tank over time
@@ -319,8 +353,8 @@ public class SampleAIControllerFinal : MonoBehaviour
         //If the raycast returns an object hit
         if (Physics.Raycast(tf.position, tf.forward, out hit, feelDist))
         {
-            //If our hit is not the player
-            if (!hit.collider.CompareTag("Player"))
+            //If our hit is not the player or a waypoint
+            if (!hit.collider.CompareTag("Player") && !hit.collider.CompareTag("Waypoint"))
             {
                 //Something is blocking us, return false
                 return false;
@@ -421,20 +455,31 @@ public class SampleAIControllerFinal : MonoBehaviour
                 Chase(player);
                 Shoot();
 
-                //check for transitions in the order of priority
+                //Check for transitions
+                //-----------------------------------
+                //If player is not in range, switch to Chase
                 if (!playerIsInRange())
                 {
                     ChangeState(AIState.Chase);
+                }
+
+                //If health is less than half capacity
+                if (data.health < (data.maxHealth * 0.5))
+                {
+                    //Check for flee
+                    ChangeState(AIState.CheckForFlee);
                 }
                 break;
 
             //--CHECK FOR FLEE STATE---
             case AIState.CheckForFlee:
+                //If player is still in range --> Flee
                 if (playerIsInRange())
                 {
                     ChangeState(AIState.Flee);
                 }
 
+                //Else player is not in range, so Rest
                 else
                 {
                     ChangeState(AIState.Rest);
@@ -455,13 +500,18 @@ public class SampleAIControllerFinal : MonoBehaviour
 
             //---REST STATE---
             case AIState.Rest:
+                //Rest and regain health
                 Rest();
+
+                //Check for transitions
+                //-----------------------------------
+                //If player comes into range --> Flee
                 if (playerIsInRange())
                 {
                     ChangeState(AIState.Flee);
                 }
 
-                //if approximately fully healed
+                //if approximately fully healed, resume the chase
                 else if (Mathf.Approximately(data.health, data.maxHealth))
                 {
                     ChangeState(AIState.Chase);
@@ -481,21 +531,22 @@ public class SampleAIControllerFinal : MonoBehaviour
     private void Blinky()
     {
         //TODO: 
-        Debug.Log("Blinky is not implemented");
+        //Debug.Log("Blinky is not implemented");
     }
 
     //Pinky Personality FSM called from Update
     //TODO: Pinky FSM
     private void Pinky()
     {
+        ChangeState(AIState.Patrol);
         Patrol();
     }
-
-    //TODO: Clyde FSM
+    
     //Clyde Personality FSM called from Update
+    //TODO: Clyde FSM
     private void Clyde()
     {
-        Debug.Log("Clyde is not implemented");
+        //Debug.Log("Clyde is not implemented");
     }
     
 }

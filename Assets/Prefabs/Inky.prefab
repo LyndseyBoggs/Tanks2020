@@ -29,9 +29,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   personality: 0
   aiState: 0
+  avoidanceStage: 0
+  avoidanceTime: 2
   waypoints: []
   currentWayPoint: 0
-  closeEnough: 0
+  closeEnough: 1.5
   loopType: 0
   isPingpongForward: 1
   playerRangeDist: 5
@@ -40,8 +42,6 @@ MonoBehaviour:
   FOVAngle: 45
   inSightAngle: 10
   fleeTime: 15
-  avoidanceStage: 0
-  avoidanceTime: 2
   player: {fileID: 0}
 --- !u!1001 &8265705783532465253
 PrefabInstance:
