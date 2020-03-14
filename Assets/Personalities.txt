@@ -1,0 +1,29 @@
+Coward
+------------
+>Always runs away from the player
+>Gains speed as his health decreases *extra*
+
+
+Swiss
+------------
+>Patrols his own borders.
+>Minds his own business unless you shoot him.
+>Will chase you out of his square, then resumes patrol. *extra*
+>Resets lastShotBy (goes back to minding own business)
+
+
+Aggressive (current Inky)
+--------------
+>Constantly chases you over the map.
+>Will flee and rest if health < 0.5health
+
+
+Sneaky
+--------------
+>Will chase the player until the player looks at him
+>If player looks at him, he runs away
+
+
+
+
+
