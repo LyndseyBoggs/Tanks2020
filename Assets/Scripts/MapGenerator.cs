@@ -28,6 +28,18 @@ public class MapGenerator : MonoBehaviour
         //This is the level game object
         GameManager.instance.LevelGameObject = this.gameObject;
 
+        //StartGame();
+
+    }
+
+    // Update is called once per frame
+    void Update()
+    {
+        
+    }
+
+    public void StartGame()
+    {
         switch (mapType)
         {
             case MapType.MapOfTheDay:
@@ -46,7 +58,7 @@ public class MapGenerator : MonoBehaviour
                 Debug.Log("[MapGenerator] Map type not implemented");
                 break;
         }
-        
+
         //Generate the grid on start
         GenerateGrid();
 
@@ -55,12 +67,6 @@ public class MapGenerator : MonoBehaviour
 
         //Spawn Enemies
         GameManager.instance.SpawnEnemies();
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 
     //Return a room prefab game object at random

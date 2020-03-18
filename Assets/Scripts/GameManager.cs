@@ -8,6 +8,14 @@ public class GameManager : MonoBehaviour
 {
     public static GameManager instance;
 
+    public enum GameState                           //States the game could possibly be in
+    {
+        MainMenu, OptionsMenu, StartMenu, Gameplay, Paused, GameOver
+    }
+
+    public GameState currentGameState = GameState.MainMenu;    //Tracks the current Game State of the game, initialized to main menu
+    public GameState previousGameState;                        //tracks the previous state of the game
+
     public GameObject LevelGameObject;
 
     public GameObject instantiatedPlayerTank;       //holds reference to Player tank
@@ -55,6 +63,132 @@ public class GameManager : MonoBehaviour
             }
             
         }
+    }
+
+    //Change to a new AI state
+    public void ChangeState(GameState newState)
+    {
+        //save time we changed states
+        //stateEnterTime = Time.time; //from ChangeState in SampleAIFinal.cs
+
+        //save current state to previous state
+        previousGameState = currentGameState; // set previous game state
+
+        //Change states
+        switch (currentGameState)
+        {
+                
+
+            case GameState.MainMenu:
+                //disable input from main menu (better place for this is here, my idea
+
+                if (newState == GameState.OptionsMenu)
+                {
+                    //Disable input from main menu
+                    //Activate options menu
+                }
+
+                if (newState == GameState.StartMenu)
+                {
+                    //Disable input from menu
+                    //Activate Game Start Menu
+                }
+
+                break;
+
+            case GameState.OptionsMenu:
+                if (newState == GameState.MainMenu)
+                {
+                    //Save changes to options
+                    //Deactivate options menu
+                    //reactivate main menu
+                }
+
+                if (newState == GameState.Paused)
+                {
+                    //save changes to options
+                    //Deactivate options menu
+                    //Activate pause menu
+                }
+
+                break;
+
+            case GameState.StartMenu:
+                //
+                if (newState == GameState.MainMenu)
+                {
+                    //Deactivate Start Menu
+                    //Activate Main Menu
+                }
+
+                if (newState == GameState.Gameplay)
+                {
+                    //Deactiviate start menu
+                    //Load level, spawn players and enemies
+                    LevelGameObject.GetComponent<MapGenerator>().StartGame();
+                }
+
+                break;
+
+            case GameState.Gameplay:
+                if (newState == GameState.Paused)
+                {
+                    //Pause the simulation
+                    //Pull up pause menu
+                }
+
+                if (newState == GameState.GameOver)
+                {
+                    //handle game over behaviors
+                    //save high score
+                    //stop simulation (if desired)
+                    //Restart Game button
+                }
+
+
+                break;
+
+            case GameState.Paused:
+                if (newState == GameState.Gameplay)
+                {
+                    //resume simulation
+                    //remove pause menu
+                }
+
+                if (newState == GameState.MainMenu)
+                {
+                    //Switch to main menu scene & end simulation
+                }
+
+                if (newState == GameState.OptionsMenu)
+                {
+                    //Deactivate pause menu UI
+                    //Activate options menu UI
+                }
+
+                break;
+
+            case GameState.GameOver:
+                if (newState == GameState.Gameplay)
+                {
+                    //Restart the game (end simulation & restart)
+                }
+
+                if (newState == GameState.MainMenu)
+                {
+                    //Switch to main menu scene & end simulation
+                }
+
+                break;
+
+            default:
+                Debug.Log("GameState not implemented");
+                break;
+        }
+
+        //change our state to the new state
+        currentGameState = newState;
+
     }
 
     public GameObject RandomSpawnPoint(List<GameObject> spawnPoints)
