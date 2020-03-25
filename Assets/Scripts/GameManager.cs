@@ -25,6 +25,9 @@ public class GameManager : MonoBehaviour
     public List<GameObject> playerSpawnPoints;      //list of player spawn points
     public List<GameObject> enemySpawnPoints;       //list of enemy spawn points
 
+    public int numberofPlayers;                     //Set to 1 or 2 based on single or multiplayer choice
+    
+
     // Runs before any Start() functions run
     void Awake()
     {
@@ -59,7 +62,7 @@ public class GameManager : MonoBehaviour
 
             else
             {
-                Debug.Log("Could not spawn the player at spawn point: Spawn point list is empty.");
+                //Debug.Log("Could not spawn the player at spawn point: Spawn point list is empty.");
             }
             
         }
