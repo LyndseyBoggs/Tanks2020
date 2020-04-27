@@ -5,7 +5,7 @@ using UnityEngine;
 public class PlayerSpawnPoint : MonoBehaviour
 {
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         //Add this to game manager list of player spawn points on start
         GameManager.instance.playerSpawnPoints.Add(this.gameObject);

@@ -228,7 +228,7 @@ public class GameManager : MonoBehaviour
     public void SpawnEnemies()
     {
         //If the list of enemy prefabs is not empty
-        if (enemyTankPrefabs.Count != 0)
+        if (enemyTankPrefabs.Count > 0)
         {
             for (int i = 0; i < enemyTankPrefabs.Count; i++)
             {
