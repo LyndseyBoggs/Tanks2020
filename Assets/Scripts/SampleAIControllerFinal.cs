@@ -62,9 +62,13 @@ public class SampleAIControllerFinal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Draw debug lines
+        //Draw debug line to player (red if unseen, green if seen)
         Debug.DrawLine(tf.position, player.transform.position, debugColor);
-        
+
+        //Test: Can See
+        CanSee(player);
+
+
         //If in avoidance state, do avoidance
         if (avoidanceStage != AvoidanceStage.None)
         {
@@ -371,16 +375,44 @@ public class SampleAIControllerFinal : MonoBehaviour
         return true;
     }
 
-    public bool CanSee()
-    {
-        //set debug color to green
-        //debugColor = Color.red;
-        //return false;
+    public bool CanSee(GameObject target)
+    {        
+        //Get the position of the target's transform
+        Vector3 targetPosition = target.transform.position;
 
-        //set debug color to green
-        debugColor = Color.green;
+        //Vector to target is target position minus AI position
+        Vector3 vectorToTarget = targetPosition - tf.position;
 
-        return true;
+        // Find the angle between the direction our agent is facing (forward in local space) and the vector to the target.
+        float angleToTarget = Vector3.Angle(vectorToTarget, tf.forward);
+
+        // if that angle is less than our field of view angle
+        if (angleToTarget < FOVAngle)
+        {
+            // Raycast to store hit data
+            RaycastHit hit;            
+                    
+            //If we hit something with the raycast
+            if (Physics.Raycast(tf.position, vectorToTarget, out hit))
+            {
+                // Check If the first object we hit is our target 
+                if (hit.collider.gameObject == target)
+                {
+                    //set debug color to green
+                    debugColor = Color.green;
+
+                    return true;
+                }
+            }
+
+            
+        }
+        
+        //return false only occurs if we cannot see the target
+        //set debug color to red
+        debugColor = Color.red;
+
+        return false;             
     }
     
     public bool CanHear()
