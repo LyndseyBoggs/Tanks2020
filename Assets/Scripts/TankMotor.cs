@@ -11,15 +11,17 @@ using UnityEngine;
 using ADBannerView = UnityEngine.iOS.ADBannerView;
 using Vector3 = UnityEngine.Vector3;
 
-//This script requires a TankData component. 
+//This script requires a TankData component and a Noisemaker
 //Create one if none exists
 [RequireComponent(typeof(TankData))]
+[RequireComponent(typeof(NoiseMaker))]
 
 public class TankMotor : MonoBehaviour
 {
     private CharacterController characterController; //stores the character controller component from this game object
     private TankData data; // stores the TankData component on this object
     private Transform tf;
+    private NoiseMaker noiseMaker;
     
     // Start is called before the first frame update
     void Start()
@@ -31,13 +33,19 @@ public class TankMotor : MonoBehaviour
         data = GetComponent<TankData>();
 
         tf = GetComponent<Transform>();
+
+        noiseMaker = GetComponent<NoiseMaker>();
+
+        if (!noiseMaker)
+        {
+            noiseMaker = gameObject.AddComponent<NoiseMaker>();
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        //Move(3); //testing Move(), comment out
-        //Rotate(180); //testing Rotate(), comment out
+        
     }
 
     //Move the tank forwards and backwards
@@ -47,6 +55,33 @@ public class TankMotor : MonoBehaviour
         Vector3 speedVector = transform.forward * speed;
 
         characterController.SimpleMove(speedVector);
+
+        //Affect sound while moving or not moving
+        //Tank is moving
+        if (speed != 0)
+        {
+            //Tank is moving, set volume to move volume
+            noiseMaker.volume = data.moveVolume;
+        }
+
+        //else, tank is not moving
+        else
+        {
+            //Tank has stopped moving (a speed of 0.0f is received each frame for SimpleMove from InputController)
+            //if volume has not reached 0, decrease volume each frame
+            if (noiseMaker.volume > 0)
+            {
+                //subtract 1 unit of volume each second
+                noiseMaker.volume -= Time.deltaTime;
+            }
+
+            //if volume falls below 0, reset to 0 (neg. volume is illogical)
+            if (noiseMaker.volume < 0)
+            {
+                noiseMaker.volume = 0;
+            }
+        }
+
     }
 
     //Rotates the tank left and right

@@ -1105,11 +1105,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 9163725665160886409, guid: 5eefdad4937bf5f4b8f9ffc51c029fdb,
-        type: 3}
-      propertyPath: player
-      value: 
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 5eefdad4937bf5f4b8f9ffc51c029fdb, type: 3}
 --- !u!1 &1431950210
@@ -1233,6 +1228,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ef07310ac17cc48b19c647c812a99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameState: 0
+  previousGameState: 0
   LevelGameObject: {fileID: 0}
   instantiatedPlayerTank: {fileID: 762334428}
   playerTankPrefab: {fileID: 2393371722937406956, guid: 302ee9fceb584654a9b1d7f6e07ee763,
@@ -1243,6 +1240,7 @@ MonoBehaviour:
   - {fileID: 4537512365205254866, guid: 5eefdad4937bf5f4b8f9ffc51c029fdb, type: 3}
   playerSpawnPoints: []
   enemySpawnPoints: []
+  numberofPlayers: 0
 --- !u!4 &1858834008
 Transform:
   m_ObjectHideFlags: 0

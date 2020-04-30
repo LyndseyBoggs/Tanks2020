@@ -31,7 +31,8 @@ public class SampleAIControllerFinal : MonoBehaviour
 
     public float playerRangeDist = 5.0f;                            //the distance in which "Player in Range" should return true
     public float fleeDistance = 8.0f;                               //the distance to which the tank will try to flee from player
-    public float hearingDistance = 25.0f;                           //Distance at which tank can hear sounds
+    public float hearingDistance = 5.0f;                           //Distance at which tank can hear sounds
+    public float hearingMinVolume = 0.5f;                           //The quietest sound the AI can hear
     public float FOVAngle = 45.0f;                                  //Total sight angle
     public float inSightAngle = 10.0f;                              //Smaller angle so tank can "aim" at player w/ this angle
     public float fleeTime = 15.0f;                                  //How long the tank should flee before checking to exit Flee
@@ -44,6 +45,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                                     //TODO: to get player from GameManager (not inspector-set)
 
     private Color debugColor = Color.red;                           //Color to update to draw debug lines, initialized to red
+    private Color hearingColor = Color.red;                         //Color for hearing sphere gizmo, init. red.
 
     // Start is called before the first frame update
     void Start()
@@ -59,15 +61,26 @@ public class SampleAIControllerFinal : MonoBehaviour
 
     }
 
+    private void OnDrawGizmos()
+    {
+        //Draw hearing radius debug
+        Gizmos.color = hearingColor;
+        Gizmos.DrawWireSphere(transform.position, hearingDistance);
+    }
+
     // Update is called once per frame
     void Update()
     {
         //Draw debug line to player (red if unseen, green if seen)
         Debug.DrawLine(tf.position, player.transform.position, debugColor);
 
+        
+
         //Test: Can See
         CanSee(player);
 
+        //Test: Can Hear
+        CanHear(player);
 
         //If in avoidance state, do avoidance
         if (avoidanceStage != AvoidanceStage.None)
@@ -415,9 +428,39 @@ public class SampleAIControllerFinal : MonoBehaviour
         return false;             
     }
     
-    public bool CanHear()
+    public bool CanHear(GameObject target)
     {
-        return true;
+        // Get the target's NoiseMaker
+        NoiseMaker targetNoise = target.GetComponent<NoiseMaker>();
+
+        // If they don't have one, they can't make noise, so return false
+        if (!targetNoise)
+        {
+            hearingColor = Color.red;
+            return false;
+        }
+
+        // However, If they do have one
+        else
+        {
+            // If volume from target occured in our hearing distance
+            if (Vector3.Distance(target.transform.position, tf.position) <= hearingDistance)
+            {
+                //if volume is loud enough for us to hear (greater than our quietest hearing capabilty)
+                if (targetNoise.volume >= hearingMinVolume)
+                {
+                    hearingColor = Color.green;
+                    return true;
+                }
+
+                
+            }
+
+            // Otherwise, we did not hear it, return false
+            hearingColor = Color.red;
+            return false;
+        }
+        
     }
 
     //Avoid whatever obstacle is in the way using Avoidance FSM

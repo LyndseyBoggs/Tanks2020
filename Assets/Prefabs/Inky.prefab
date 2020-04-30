@@ -38,7 +38,8 @@ MonoBehaviour:
   isPingpongForward: 1
   playerRangeDist: 5
   fleeDistance: 8
-  hearingDistance: 25
+  hearingDistance: 7
+  hearingMinVolume: 0.5
   FOVAngle: 45
   inSightAngle: 10
   fleeTime: 15
