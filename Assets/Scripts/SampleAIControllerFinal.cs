@@ -12,7 +12,8 @@ public class SampleAIControllerFinal : MonoBehaviour
     public enum Personalities { Inky, Pinky, Blinky, Clyde}         //Tank Personities enum
     public Personalities personality = Personalities.Inky;          //Designer-chosen personality of tank effects behavior in Update()
 
-    public enum AIState { Chase, ChaseAndFire, CheckForFlee, Flee, Rest, Patrol }   //enum of possible AI States
+    public enum AIState { Chase, ChaseAndFire, CheckForFlee,        //enum of possible AI States
+                          Flee, Rest, Patrol }   
     public AIState aiState = AIState.Chase;                         //current AI State of the tank
     private float stateEnterTime;                                   //tracks the time the tank entered its current state
 
@@ -21,26 +22,28 @@ public class SampleAIControllerFinal : MonoBehaviour
     public float avoidanceTime = 2.0f;                              //The time the tank should move forward to try to avoid and obstacle
     private float exitTime;                                         //Tracks exit time timer in avoidance states
 
-    public Transform[] waypoints;
-    public int currentWayPoint = 0;
-    public float closeEnough = 0.5f;
-    public enum LoopType {Stop, Loop, Pingpong }
-    public LoopType loopType;
-    public bool isPingpongForward = true;   //tracks if tank is pingponging forward or backward.
+    public Transform[] waypoints;                                   //Designer-friendly Array of waypoint transforms to follow
+    public int currentWayPoint = 0;                                 //the current waypoint in the array that the tank is seeking, initialized to array index 0
+    public float closeEnough = 0.5f;                                //Designer-friendly The distance at which the tank is "close enough" to the waypoint to progress towards the next waypoint
+    public enum LoopType {Stop, Loop, Pingpong }                    //Enum selection for the pattern type of waypoint - patrol the tank should do
+    public LoopType loopType;                                       //Designer-chosen loop type
+    public bool isPingpongForward = true;                           //tracks if tank is pingponging forward or backward.
 
-    public float playerRangeDist = 5.0f;    //the distance in which "Player in Range" should return true
-    public float fleeDistance = 8.0f;       //the distance to which the tank will try to flee from player
-    public float hearingDistance = 25.0f;   //Distance at which tank can hear sounds
-    public float FOVAngle = 45.0f;          //Total sight angle
-    public float inSightAngle = 10.0f;      //Smaller angle so tank can "aim" at player w/ this angle
-    public float fleeTime = 15.0f;          //How long the tank should flee before checking to exit Flee
+    public float playerRangeDist = 5.0f;                            //the distance in which "Player in Range" should return true
+    public float fleeDistance = 8.0f;                               //the distance to which the tank will try to flee from player
+    public float hearingDistance = 25.0f;                           //Distance at which tank can hear sounds
+    public float FOVAngle = 45.0f;                                  //Total sight angle
+    public float inSightAngle = 10.0f;                              //Smaller angle so tank can "aim" at player w/ this angle
+    public float fleeTime = 15.0f;                                  //How long the tank should flee before checking to exit Flee
 
     private TankData data;          //This tank's TankData
     private TankMotor motor;        //This tank's TankMotor
     private TankShooter shooter;    //This tank's Shooter
     private Transform tf;           //This tank's Transform
     public GameObject player;       //used to manually chase player in current version.
-                                    //Will need to update to get player from GameManager
+                                    //TODO: to get player from GameManager (not inspector-set)
+
+    private Color debugColor = Color.red;                           //Color to update to draw debug lines, initialized to red
 
     // Start is called before the first frame update
     void Start()
@@ -52,13 +55,16 @@ public class SampleAIControllerFinal : MonoBehaviour
         shooter = GetComponent<TankShooter>();
 
         //get reference to manager player (temporary until next milestone)
-        player = GameManager.instance.instantiatedPlayerTank;
+        player = GameManager.instance.instantiatedPlayerTank;            
 
     }
 
     // Update is called once per frame
     void Update()
     {
+        //Draw debug lines
+        Debug.DrawLine(tf.position, player.transform.position, debugColor);
+        
         //If in avoidance state, do avoidance
         if (avoidanceStage != AvoidanceStage.None)
         {
@@ -362,6 +368,23 @@ public class SampleAIControllerFinal : MonoBehaviour
         }
 
         //Nothing is blocking us, return true
+        return true;
+    }
+
+    public bool CanSee()
+    {
+        //set debug color to green
+        //debugColor = Color.red;
+        //return false;
+
+        //set debug color to green
+        debugColor = Color.green;
+
+        return true;
+    }
+    
+    public bool CanHear()
+    {
         return true;
     }
 
