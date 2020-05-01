@@ -236,8 +236,7 @@ public class GameManager : MonoBehaviour
                 GameObject instantiatedEnemyTank =
                     Instantiate(enemyTankPrefabs[i], RandomSpawnPoint(enemySpawnPoints).transform.position, Quaternion.identity);
 
-                //Add to list of instantiated enemy tanks
-                instantiatedEnemyTanks.Add(instantiatedEnemyTank);
+                //Note: Enemies add themelves to list of instantiated enemy tanks on Start() of AI Controller                
             }
         }
 

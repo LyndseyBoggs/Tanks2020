@@ -9,8 +9,8 @@ using UnityEngine;
 
 public class SampleAIControllerFinal : MonoBehaviour
 {
-    public enum Personalities { Inky, Pinky, Blinky, Clyde}         //Tank Personities enum
-    public Personalities personality = Personalities.Inky;          //Designer-chosen personality of tank effects behavior in Update()
+    public enum Personalities { Aggro, Swiss, Blind, Coward}         //Tank Personities enum
+    public Personalities personality = Personalities.Aggro;          //Designer-chosen personality of tank effects behavior in Update()
 
     public enum AIState { Chase, ChaseAndFire, CheckForFlee,        //enum of possible AI States
                           Flee, Rest, Patrol }   
@@ -28,6 +28,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     public enum LoopType {Stop, Loop, Pingpong }                    //Enum selection for the pattern type of waypoint - patrol the tank should do
     public LoopType loopType;                                       //Designer-chosen loop type
     public bool isPingpongForward = true;                           //tracks if tank is pingponging forward or backward.
+    public RoomTerritory territory;                                    //Territory which belongs to this tank to guard, if personality dictates it so
 
     public float playerRangeDist = 5.0f;                            //the distance in which "Player in Range" should return true
     public float fleeDistance = 8.0f;                               //the distance to which the tank will try to flee from player
@@ -44,7 +45,7 @@ public class SampleAIControllerFinal : MonoBehaviour
     public GameObject player;       //used to manually chase player in current version.
                                     //TODO: to get player from GameManager (not inspector-set)
 
-    private Color debugColor = Color.red;                           //Color to update to draw debug lines, initialized to red
+    private Color sightColor = Color.red;                           //Color to update to draw debug lines, initialized to red
     private Color hearingColor = Color.red;                         //Color for hearing sphere gizmo, init. red.
 
     // Start is called before the first frame update
@@ -57,10 +58,14 @@ public class SampleAIControllerFinal : MonoBehaviour
         shooter = GetComponent<TankShooter>();
 
         //get reference to manager player (temporary until next milestone)
-        player = GameManager.instance.instantiatedPlayerTank;            
+        player = GameManager.instance.instantiatedPlayerTank;
+
+        //Add self to GameManager list of enemies
+        GameManager.instance.instantiatedEnemyTanks.Add(this.gameObject);
 
     }
 
+    //Debug gizmos 
     private void OnDrawGizmos()
     {
         //Draw hearing radius debug
@@ -71,16 +76,11 @@ public class SampleAIControllerFinal : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        //Draw debug line to player (red if unseen, green if seen)
-        Debug.DrawLine(tf.position, player.transform.position, debugColor);
-
-        
-
-        //Test: Can See
+        //Testing
         CanSee(player);
-
-        //Test: Can Hear
-        CanHear(player);
+        
+        //Draw debug line to player (red if unseen, green if seen)
+        Debug.DrawLine(tf.position, player.transform.position, sightColor);
 
         //If in avoidance state, do avoidance
         if (avoidanceStage != AvoidanceStage.None)
@@ -93,20 +93,20 @@ public class SampleAIControllerFinal : MonoBehaviour
         {
             switch (personality)
             {
-                case Personalities.Inky:
-                    Inky();     //Run Inky FSM
+                case Personalities.Aggro:
+                    Aggro();     //Run Aggro FSM
                     break;
 
-                case Personalities.Blinky:
-                    Blinky();   //Run Blinky FSM
+                case Personalities.Blind:
+                    Blind();   //Run Blind FSM
                     break;
 
-                case Personalities.Pinky:
-                    Pinky();    //Run Pinky FSM
+                case Personalities.Swiss:
+                    Swiss();    //Run Swiss FSM
                     break;
 
-                case Personalities.Clyde:
-                    Clyde();    //Run Clyde FSM
+                case Personalities.Coward:
+                    Coward();    //Run Coward FSM
                     break;
 
                 default:
@@ -412,7 +412,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                 if (hit.collider.gameObject == target)
                 {
                     //set debug color to green
-                    debugColor = Color.green;
+                    sightColor = Color.green;
 
                     return true;
                 }
@@ -423,7 +423,7 @@ public class SampleAIControllerFinal : MonoBehaviour
         
         //return false only occurs if we cannot see the target
         //set debug color to red
-        debugColor = Color.red;
+        sightColor = Color.red;
 
         return false;             
     }
@@ -520,8 +520,8 @@ public class SampleAIControllerFinal : MonoBehaviour
     //-------------------------------------------------------
     //  Personality FMS
     //-------------------------------------------------------
-    //Inky Personality FSM called from Update
-    private void Inky()
+    //Aggro Personality FSM called from Update
+    private void Aggro()
     {
         switch (aiState)
         {
@@ -618,33 +618,196 @@ public class SampleAIControllerFinal : MonoBehaviour
 
             //--DEFAULT---
             default:
-                Debug.Log("Inky AI State not implemented");
+                Debug.Log("Aggro AI State not implemented");
                 break;
 
         }
     }
 
-    //Blinky Personality FSM called from Update
-    //TODO: Blinky FSM
-    private void Blinky()
+    //Blind Personality FSM called from Update
+    private void Blind()
     {
-        //TODO: 
-        //Debug.Log("Blinky is not implemented");
+        switch (aiState)
+        {
+            //---CHASE STATE---
+            case AIState.Chase:
+                //Chase the player
+                Chase(player);
+
+                //Check for transitions
+                //-----------------------------------
+                //If cannot hear player -> rest
+                if (!CanHear(player))
+                {
+                    //rest
+                    ChangeState(AIState.Rest);
+                }
+
+                //Else if player is in range
+                else if (playerIsInRange())
+                {
+                    //Chase and fire at the player
+                    ChangeState(AIState.ChaseAndFire);
+                }
+                break;
+
+            //--CHASE AND FIRE STATE---
+            case AIState.ChaseAndFire:
+                //do state behaviors
+                Chase(player);
+                Shoot();
+
+                //Check for transitions
+                //-----------------------------------
+                //If player is not in range, switch to Chase
+                if (!playerIsInRange())
+                {
+                    ChangeState(AIState.Chase);
+                }
+
+                break;
+
+            //---REST STATE---
+            case AIState.Rest:
+                //Rest and regain health
+                Rest();                              
+
+                //Check for transitions
+                //-----------------------------------
+                //If player is heard, chase the player
+                if (CanHear(player))
+                {
+                    ChangeState(AIState.Chase);
+                }
+
+                break;
+
+            //--DEFAULT---
+            default:
+                Debug.Log("Blind AI State not implemented");
+                break;
+
+        }
     }
 
-    //Pinky Personality FSM called from Update
-    //TODO: Pinky FSM
-    private void Pinky()
+    //Swiss Personality FSM called from Update
+    private void Swiss()
     {
-        ChangeState(AIState.Patrol);
-        Patrol();
+        switch (aiState)
+        {
+            //---PATROL STATE---
+            case AIState.Patrol:
+                //Patrol the waypoints
+                Patrol();
+
+                //Rest while patroling (regain health0
+                Rest();
+
+                //Check for transitions
+                //-----------------------------------
+                //if shot by player, it's war
+                if (data.lastShotBy == player)
+                {
+                    //Chase the player
+                    ChangeState(AIState.Chase);
+                }
+
+                break;
+            
+            //---CHASE STATE---
+            case AIState.Chase:
+                //Chase the player
+                Chase(player);
+
+                //Check for transitions
+                //-----------------------------------
+                //If player leaves the zone, resume Patrol
+                if (territory.isInvaded == false)
+                {
+                    //reset lastShotBy variable
+                    data.lastShotBy = null;
+                    
+                    //go back to Patrol
+                    ChangeState(AIState.Patrol);
+                }
+
+                //Else if player is in range
+                else if (playerIsInRange())
+                {
+                    //Chase and fire at the player
+                    ChangeState(AIState.ChaseAndFire);
+                }
+                break;
+
+            //--CHASE AND FIRE STATE---
+            case AIState.ChaseAndFire:
+                //do state behaviors
+                Chase(player);
+                Shoot();
+
+                //Check for transitions
+                //-----------------------------------
+                //If player leaves the zone, resume Patrol
+                if (territory.isInvaded == false)
+                {
+                    //reset lastShotBy variable
+                    data.lastShotBy = null;
+
+                    //go back to Patrol
+                    ChangeState(AIState.Patrol);
+                }
+
+                //else if player is not in range, switch to Chase
+                else if (!playerIsInRange())
+                {
+                    ChangeState(AIState.Chase);
+                }
+
+                break;
+
+            //--DEFAULT---
+            default:
+                Debug.Log("Swiss AI State not implemented");
+                break;
+
+        }
     }
     
-    //Clyde Personality FSM called from Update
-    //TODO: Clyde FSM
-    private void Clyde()
+    //Coward Personality FSM called from Update
+    private void Coward()
     {
-        //Debug.Log("Clyde is not implemented");
+        switch (aiState)
+        {                       
+            //--CHECK FOR FLEE STATE---
+            case AIState.CheckForFlee:
+                //Idles in place utnil transition
+                
+                //If player is still in range --> Flee
+                if (playerIsInRange())
+                {
+                    ChangeState(AIState.Flee);
+                }
+
+                break;
+
+            //---FLEE SATE---
+            case AIState.Flee:
+                //Flee from player
+                Flee(player);
+
+                //wait "fleeTime" seconds then check for flee
+                if (Time.time >= (stateEnterTime + fleeTime))
+                {
+                    ChangeState(AIState.CheckForFlee);
+                }
+                break;
+
+            //--DEFAULT---
+            default:
+                Debug.Log("Coward AI State not implemented");
+                break;
+
+        }
     }
     
 }
