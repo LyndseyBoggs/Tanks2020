@@ -230,8 +230,9 @@ GameObject:
   - component: {fileID: 3570684758895609195}
   - component: {fileID: 7757748928743079713}
   - component: {fileID: 1911098685115541962}
-  - component: {fileID: 1101471605416782402}
   - component: {fileID: 3558684618748230718}
+  - component: {fileID: 4309021742389131297}
+  - component: {fileID: 1821957398073886586}
   m_Layer: 0
   m_Name: EnemyTank
   m_TagString: Untagged
@@ -298,6 +299,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveSpeed: 3
   rotateSpeed: 180
+  moveVolume: 1
   fireRate: 1
   shellForce: 20
   shellDmg: 1
@@ -309,19 +311,7 @@ MonoBehaviour:
   maxHealth: 10
   healthRegenPerSec: 0.5
   score: 0
---- !u!114 &1101471605416782402
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3570684758881235111}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b99b58d8a5e336942bc43b428c3e45c5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  input: 0
+  playerNumber: 0
 --- !u!114 &3558684618748230718
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -337,6 +327,49 @@ MonoBehaviour:
   cannonBall: {fileID: 3233708176373263285, guid: e4c1726318ca88947aa09feb09c0da9f,
     type: 3}
   firePoint: {fileID: 930563591440407536}
+--- !u!114 &4309021742389131297
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3570684758881235111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6646829cdb7642a4eb57634f88199ffa, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Powerups: []
+--- !u!114 &1821957398073886586
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3570684758881235111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fddedbf2eabc613479526263b58ddc1c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  personality: 0
+  aiState: 0
+  avoidanceStage: 0
+  avoidanceTime: 2
+  waypoints: []
+  currentWayPoint: 0
+  closeEnough: 1.5
+  loopType: 0
+  isPingpongForward: 1
+  territory: {fileID: 0}
+  playerRangeDist: 5
+  fleeDistance: 8
+  hearingDistance: 7
+  hearingMinVolume: 0.5
+  FOVAngle: 45
+  inSightAngle: 10
+  fleeTime: 15
+  player: {fileID: 0}
 --- !u!1 &3570684758881235113
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,7 +7,7 @@ public class TankData : MonoBehaviour
     public float moveSpeed;               // Speed the tank moves forward and backward
     public float rotateSpeed;             // Speed at which the tank rotates
     public float moveVolume = 1;              // volume of sound the tank makes while moving (used for Noisemaker)
-    public float fireRate = 1;
+    public float fireRate = 1;            // number of seconds the player must wait between shots (reload time)
     public float shellForce = 1.0f;       // the force this tank applies to the shell, default to 1.0f
     public float shellDmg = 1.0f;         // amount of health the shell takes from its target enemy on hit
     public float feelDistance = 4.0f;     // Distance to look forward, begin avoidance if obstacle is hit w/ raycast

@@ -110,7 +110,8 @@ MonoBehaviour:
     speedMod: 0
     healthMod: 0
     maxHealthMod: 0
-    fireRateMod: 5
+    fireRateMod: -0.75
     duration: 15
     isPermanent: 0
   feedbackAudioClip: {fileID: 0}
+  mySpawner: {fileID: 0}

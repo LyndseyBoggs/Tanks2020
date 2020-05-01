@@ -1,49 +1,5 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!114 &190461099
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4843675564803644610}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cf4864618d2b0b146808d62257821092, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  attackMode: 1
-  target: {fileID: 0}
-  fleeDistance: 1
---- !u!114 &210646392133605017
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4843675564803644610}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fddedbf2eabc613479526263b58ddc1c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  personality: 0
-  aiState: 0
-  avoidanceStage: 0
-  avoidanceTime: 2
-  waypoints: []
-  currentWayPoint: 0
-  closeEnough: 1.5
-  loopType: 0
-  isPingpongForward: 1
-  playerRangeDist: 5
-  fleeDistance: 8
-  hearingDistance: 7
-  hearingMinVolume: 0.5
-  FOVAngle: 45
-  inSightAngle: 10
-  fleeTime: 15
-  player: {fileID: 0}
 --- !u!1001 &8265705783532465253
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -54,7 +10,7 @@ PrefabInstance:
     - target: {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457,
         type: 3}
       propertyPath: m_Name
-      value: Inky
+      value: Aggro
       objectReference: {fileID: 0}
     - target: {fileID: 3570684758881201287, guid: 1d69b3d4a07fa22448da3f067dd13457,
         type: 3}
@@ -111,16 +67,14 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 1101471605416782402, guid: 1d69b3d4a07fa22448da3f067dd13457,
-        type: 3}
+    - target: {fileID: 0}
       propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1911098685115541962, guid: 1d69b3d4a07fa22448da3f067dd13457,
+        type: 3}
+      propertyPath: moveVolume
       value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
---- !u!1 &4843675564803644610 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457,
-    type: 3}
-  m_PrefabInstance: {fileID: 8265705783532465253}
-  m_PrefabAsset: {fileID: 0}
