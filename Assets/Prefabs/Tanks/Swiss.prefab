@@ -69,6 +69,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 210646392133605017, guid: e34d215f108349e4bb727af54bb9a5f6,
         type: 3}
+      propertyPath: waypoints.Array.size
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 210646392133605017, guid: e34d215f108349e4bb727af54bb9a5f6,
+        type: 3}
       propertyPath: personality
       value: 1
       objectReference: {fileID: 0}
@@ -82,9 +87,10 @@ PrefabInstance:
       propertyPath: aiState
       value: 5
       objectReference: {fileID: 0}
-    - target: {fileID: 190461099, guid: e34d215f108349e4bb727af54bb9a5f6, type: 3}
-      propertyPath: target
-      value: 
+    - target: {fileID: 210646392133605017, guid: e34d215f108349e4bb727af54bb9a5f6,
+        type: 3}
+      propertyPath: loopType
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4843675564805898760, guid: e34d215f108349e4bb727af54bb9a5f6,
         type: 3}
@@ -101,5 +107,19 @@ PrefabInstance:
       propertyPath: m_Materials.Array.data[0]
       value: 
       objectReference: {fileID: 2100000, guid: da9320aa8ea08da4c837e781f21ef2d9, type: 2}
+    - target: {fileID: 190461099, guid: e34d215f108349e4bb727af54bb9a5f6, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781458213350599455, guid: e34d215f108349e4bb727af54bb9a5f6,
+        type: 3}
+      propertyPath: personality
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7781458213350599455, guid: e34d215f108349e4bb727af54bb9a5f6,
+        type: 3}
+      propertyPath: aiState
+      value: 5
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e34d215f108349e4bb727af54bb9a5f6, type: 3}

@@ -2,11 +2,13 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent(typeof(TankData))]
+
 public class PowerUpController : MonoBehaviour
 {
     private TankData data;
     public List<PowerUp> Powerups;   //list of all active power ups
-    List<PowerUp> expiredPowerUps;   //list of expired power ups
+    private List<PowerUp> expiredPowerUps;   //list of expired power ups
     
     // Start is called before the first frame update
     void Start()
@@ -39,16 +41,16 @@ public class PowerUpController : MonoBehaviour
         }
 
         //for each powerup in the expired list -> deactive powerup, remove from active list
-        foreach (PowerUp expPwr in expiredPowerUps)
+        foreach (PowerUp p in expiredPowerUps)
         {
             //Deactivate the powerup
-            expPwr.OnDeactivate(data);
+            p.OnDeactivate(data);
 
             //Remove from active list
-            Powerups.Remove(expPwr);
+            Powerups.Remove(p);
         }
 
-        //Clear the Expired List
+        //Clear the Expired List, for good measure
         expiredPowerUps.Clear();
     }
 

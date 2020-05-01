@@ -21,10 +21,11 @@ public class GameManager : MonoBehaviour
     public GameObject instantiatedPlayerTank;       //holds reference to Player tank
     public GameObject playerTankPrefab;             //the prefab we want to use to spawn the player
     public List<GameObject> instantiatedEnemyTanks; //list of all enemy tanks currently instantiated
+    public List<GameObject> instantiatedPickUps;    //list of all pickups currently instantiated
     public List<GameObject> enemyTankPrefabs;       //Designer list of enemy tanks to instantiate
     public List<GameObject> playerSpawnPoints;      //list of player spawn points
     public List<GameObject> enemySpawnPoints;       //list of enemy spawn points
-
+    
     public int numberofPlayers;                     //Set to 1 or 2 based on single or multiplayer choice
     
 
@@ -49,10 +50,12 @@ public class GameManager : MonoBehaviour
     }
 
     void Update()
-    {
-        //If the player tank does not exist
+    {        
+        //If the player tank does not exist (it has been destroyed)
         if (instantiatedPlayerTank == null)
         {
+            //TODO: If player lives > 0
+
             //if the list of player spawn points is not empty
             if (playerSpawnPoints.Count != 0)
             {

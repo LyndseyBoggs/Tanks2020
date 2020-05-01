@@ -8,17 +8,19 @@ public class MapGenerator : MonoBehaviour
 {
     public enum MapType {MapOfTheDay, Random, Seeded}   //Type of map to generate
 
-    public MapType mapType = MapType.Random; //public variable to store user selection, defaulted to Random
+    public MapType mapType = MapType.Random;            //public variable to store user selection, defaulted to Random
 
-    public int mapSeed;     //Designer-friendly variable to input specific map seed
+    public int mapSeed;                                 //Designer-friendly variable to input specific map seed
 
-    public int MapRows = 3;
-    public int MapCols = 3;
+    public int MapRows = 3;                             //Designer-friendly int of rows
+    public int MapCols = 3;                             //designer-friendly int of cols
 
     private float roomWidth = 50;
     private float roomLength = 50;
 
-    public GameObject[] roomPrefabs;
+    public GameObject[] roomPrefabs;                    //Designer-friendly array of room prefabs to use in generating map
+
+    public List<RoomTerritory> instantiatedTerritories;         //list of all room territories currently instantiated (updated as rooms are spawned)
 
     private Room[,] grid; //Two-dimensional array for rooms to act as our grid, may be moved to Game Manager
 
@@ -107,6 +109,13 @@ public class MapGenerator : MonoBehaviour
 
                 //Instantiate random room at position at prefab rotation
                 GameObject tempRoomObj = Instantiate(GetRandomRoom(), newPosition, Quaternion.identity) as GameObject;
+
+                //If Room has a territory child on it, add to list of territories
+                RoomTerritory roomTerritory = tempRoomObj.GetComponentInChildren<RoomTerritory>();
+                if (roomTerritory)
+                {
+                    instantiatedTerritories.Add(roomTerritory);
+                }
 
                 //Set our room's parent object
                 tempRoomObj.transform.parent = this.transform;

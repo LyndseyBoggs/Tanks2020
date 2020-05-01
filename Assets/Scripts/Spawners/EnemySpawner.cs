@@ -17,11 +17,4 @@ public class EnemySpawner : MonoBehaviour
         GameManager.instance.enemySpawnPoints.Remove(this.gameObject);
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
-
 }
