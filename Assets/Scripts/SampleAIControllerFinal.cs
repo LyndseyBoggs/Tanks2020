@@ -48,6 +48,11 @@ public class SampleAIControllerFinal : MonoBehaviour
     private Color sightColor = Color.red;                           //Color to update to draw debug lines, initialized to red
     private Color hearingColor = Color.red;                         //Color for hearing sphere gizmo, init. red.
 
+
+
+
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -76,7 +81,18 @@ public class SampleAIControllerFinal : MonoBehaviour
             waypoints = territory.waypoints;
         }
 
+        //Teleport Swiss on start to middle of assigned territory (to avoid getting lost and stuck in generated map
+        if (personality == Personalities.Swiss)
+        {
+            transform.position = territory.gameObject.transform.position;
+        }
 
+    }
+
+    private void OnDestroy()
+    {
+        //Remove self to GameManager list of enemies
+        GameManager.instance.instantiatedEnemyTanks.Remove(this.gameObject);
     }
 
     //Debug gizmos 
@@ -530,6 +546,9 @@ public class SampleAIControllerFinal : MonoBehaviour
                 break;
         }
     }
+
+
+
 
     //-------------------------------------------------------
     //  Personality FMS
