@@ -25,7 +25,13 @@ public class GameManager : MonoBehaviour
     public List<GameObject> enemyTankPrefabs;       //Designer list of enemy tanks to instantiate
     public List<GameObject> playerSpawnPoints;      //list of player spawn points
     public List<GameObject> enemySpawnPoints;       //list of enemy spawn points
-    
+
+    public int highScore;           //stores highest score ever achieved in game
+    public List<ScoreData> highScores;
+
+    public float fxVolume;          //
+    public float musicVolume;       //
+
     public int numberofPlayers;                     //Set to 1 or 2 based on single or multiplayer choice
     
 
@@ -47,6 +53,15 @@ public class GameManager : MonoBehaviour
 
         //Prevents game manager from being destroyed between scenes
         DontDestroyOnLoad(gameObject);
+    }
+
+    private void Start()
+    {
+        highScores = new List<ScoreData>(); //initialize high scores list
+        LoadPrefs();
+        highScores.Sort(); //sorts scores lowest to highest
+        highScores.Reverse(); //flips to highest to lowest
+        highScores = highScores.GetRange(0, 5); //get top scores only
     }
 
     void Update()
@@ -82,8 +97,7 @@ public class GameManager : MonoBehaviour
 
         //Change states
         switch (currentGameState)
-        {
-                
+        {               
 
             case GameState.MainMenu:
                 //disable input from main menu (better place for this is here, my idea
@@ -140,6 +154,7 @@ public class GameManager : MonoBehaviour
                 if (newState == GameState.Paused)
                 {
                     //Pause the simulation
+                        //Chase time scale to 0, but test it out first (not good with AddForce)
                     //Pull up pause menu
                 }
 
@@ -177,12 +192,13 @@ public class GameManager : MonoBehaviour
             case GameState.GameOver:
                 if (newState == GameState.Gameplay)
                 {
-                    //Restart the game (end simulation & restart)
+                    //Restart the game (end simulation & restart) (reload the gameplay scene)
                 }
 
                 if (newState == GameState.MainMenu)
                 {
                     //Switch to main menu scene & end simulation
+                    //Activate the main menu
                 }
 
                 break;
@@ -248,6 +264,92 @@ public class GameManager : MonoBehaviour
         }
 
         
+    }
+
+    public void LoadPrefs()
+    {
+        //If high score has previously been saved
+        if (PlayerPrefs.HasKey("HighScore"))
+        {
+            //load high score into game
+            highScore = PlayerPrefs.GetInt("HighScore");
+        }
+        //else, no high score was found to load
+        else
+        {
+            //set high score to 0 (there is no high score yet)
+            highScore = 0;
+        }
+
+        //If music volume has previously been saved
+        if (PlayerPrefs.HasKey("MusicVolume"))
+        {
+            //load previous music volume into music volume
+            musicVolume = PlayerPrefs.GetFloat("MusicVolume");
+        }
+        //else, no music volume was saved
+        else
+        {
+            //Set to default of max volume
+            musicVolume = 1.0f;
+        }
+
+        //If FX Volume has previously been saved
+        if (PlayerPrefs.HasKey("FXVolume"))
+        {
+            //load previous fx volume into music volume
+            fxVolume = PlayerPrefs.GetFloat("FXVolume");
+        }
+        //else, no fx volume was saved
+        else
+        {
+            //Set to default of max volume
+            fxVolume = 1.0f;
+        }
+
+        if (PlayerPrefs.HasKey("Score1"))
+        {
+            highScores[0].name = PlayerPrefs.GetString("Name1");
+            highScores[0].score = PlayerPrefs.GetFloat("Score1");
+        }
+
+        else
+        {
+            highScores.Add(new ScoreData("LMB", 0));
+        }
+
+
+    }
+
+    public void SavePrefs()
+    {
+        //Set PlayerPrefs variables and save prefs
+        PlayerPrefs.SetInt("HighScore", highScore);
+        PlayerPrefs.SetFloat("MusicVolume", musicVolume);
+        PlayerPrefs.SetFloat("FXVolume", fxVolume);
+
+        //Save names
+        PlayerPrefs.SetString("Name1", highScores[0].name);
+        PlayerPrefs.SetString("Name2", highScores[1].name);
+        PlayerPrefs.SetString("Name3", highScores[2].name);
+        PlayerPrefs.SetString("Name4", highScores[3].name);
+        PlayerPrefs.SetString("Name5", highScores[4].name);
+        PlayerPrefs.SetString("Name6", highScores[5].name); //might be extra, included just in case
+
+        //Save Scores
+        PlayerPrefs.SetFloat("Score1", highScores[0].score);
+        PlayerPrefs.SetFloat("Score2", highScores[1].score);
+        PlayerPrefs.SetFloat("Score3", highScores[2].score);
+        PlayerPrefs.SetFloat("Score4", highScores[3].score);
+        PlayerPrefs.SetFloat("Score5", highScores[4].score);
+        PlayerPrefs.SetFloat("Score6", highScores[5].score); //might be extra, included just in case
+
+        PlayerPrefs.Save();
+    }
+
+    private void OnApplicationQuit()
+    {
+        SavePrefs();
     }
 
     //Get date as integer
