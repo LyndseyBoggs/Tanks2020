@@ -1,0 +1,31 @@
+
+
+Coward
+------------
+>Always runs away from the player, does not heal
+
+
+Swiss
+------------
+>Patrols his own borders.
+>Minds his own business unless you shoot him.
+>Will chase you out of his square, then resumes patrol. *extra*
+>Resets lastShotBy (goes back to minding own business)
+
+
+Aggro
+--------------
+>Constantly chases you over the map.
+>Will flee and rest if health < 0.5 health
+
+
+Blind
+--------------
+>Stands still until he hears the player
+>Will chase and fire at the player while hearing them
+> If player escapes hearing, will remain still and rest
+
+
+
+
+

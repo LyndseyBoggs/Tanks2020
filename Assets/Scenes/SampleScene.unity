@@ -255,6 +255,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d8ef07310ac17cc48b19c647c812a99e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentGameState: 0
+  previousGameState: 0
+  LevelGameObject: {fileID: 0}
   instantiatedPlayerTank: {fileID: 0}
   playerTankPrefab: {fileID: 2393371722937406956, guid: 302ee9fceb584654a9b1d7f6e07ee763,
     type: 3}
@@ -265,6 +268,7 @@ MonoBehaviour:
   - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
   playerSpawnPoints: []
   enemySpawnPoints: []
+  numberofPlayers: 0
 --- !u!1 &324278309
 GameObject:
   m_ObjectHideFlags: 0
@@ -1084,7 +1088,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c7df217b80cc5f4bb90a5336ce5f749, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapType: 0
+  mapType: 2
   mapSeed: 10
   MapRows: 2
   MapCols: 2
