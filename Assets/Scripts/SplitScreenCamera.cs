@@ -24,15 +24,13 @@ public class SplitScreenCamera : MonoBehaviour
             
             if (data.playerNumber == 1)
             {
-                //Draw player 1 on top
-                //Adjust camera height
+                //Draw player 1 on top - Adjust camera height
                 playerCamera.rect = new Rect(0, 0.5f, 1, 0.5f);
             }
 
             else
             {
-                //Draw player 2 on bottom
-                //Adjust camera height
+                //Draw player 2 on bottom - Adjust camera height
                 playerCamera.rect = new Rect(0, 0, 1, 0.5f);
             }
         }

@@ -32,7 +32,7 @@ public class GameManager : MonoBehaviour
     public float fxVolume;          //
     public float musicVolume;       //
 
-    public int numberofPlayers;                     //Set to 1 or 2 based on single or multiplayer choice
+    public int numberofPlayers;     //Set to 1 or 2 based on single or multiplayer choice
     
 
     // Runs before any Start() functions run

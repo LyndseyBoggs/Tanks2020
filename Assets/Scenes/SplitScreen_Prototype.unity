@@ -155,9 +155,14 @@ MonoBehaviour:
   instantiatedPlayerTank: {fileID: 0}
   playerTankPrefab: {fileID: 0}
   instantiatedEnemyTanks: []
+  instantiatedPickUps: []
   enemyTankPrefabs: []
   playerSpawnPoints: []
   enemySpawnPoints: []
+  highScore: 0
+  highScores: []
+  fxVolume: 0
+  musicVolume: 0
   numberofPlayers: 2
 --- !u!4 &350603740
 Transform:
@@ -381,14 +386,6 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1763847526, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
-      propertyPath: m_NormalizedViewPortRect.height
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763847526, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
-      propertyPath: m_NormalizedViewPortRect.y
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763847526, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
       propertyPath: m_Depth
       value: 0
       objectReference: {fileID: 0}
@@ -566,10 +563,6 @@ PrefabInstance:
     - target: {fileID: 1763847524, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
       propertyPath: m_TagString
       value: MainCamera
-      objectReference: {fileID: 0}
-    - target: {fileID: 1763847526, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
-      propertyPath: m_NormalizedViewPortRect.height
-      value: 0.5
       objectReference: {fileID: 0}
     - target: {fileID: 1763847526, guid: 302ee9fceb584654a9b1d7f6e07ee763, type: 3}
       propertyPath: m_Depth

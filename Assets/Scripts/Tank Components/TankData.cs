@@ -21,7 +21,7 @@ public class TankData : MonoBehaviour
     public float healthRegenPerSec = 0.5f;
 
     public int score = 0;                  //Q: Can I make this an unsigned int to prevent it from dropping into the neg.?
-    public int playerNumber;               //Is this player 1, or player 2?
+    public int playerNumber = 1;           //Is this player 1, or player 2?
     //TODO: Assign WASD or arrow keys based on player number 
 
     void Start()
