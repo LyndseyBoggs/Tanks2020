@@ -7,11 +7,16 @@ public class Pickup : MonoBehaviour
     public PowerUp powerup;             //powerup to apply via Pickup
     public AudioClip feedbackAudioClip; //audio to play when picked up
     private Transform tf;               //transform of this game object
+    public PickUpSpawner mySpawner;     //used to set isSpawned bool is pickup spawner
     
     // Start is called before the first frame update
     void Start()
     {
+        //get my transform
         tf = GetComponent<Transform>();
+
+        //Add self to pickups list in game manager
+        GameManager.instance.instantiatedPickUps.Add(this.gameObject);
     }
 
     // Update is called once per frame
@@ -39,9 +44,18 @@ public class Pickup : MonoBehaviour
                 //TODO: Adjust volume based on settings
                 AudioSource.PlayClipAtPoint(feedbackAudioClip, tf.position, 1.0f);
             }
-            
+
+            //set isSpawned in PickupSpawner
+            mySpawner.isSpawned = false;
+
             //Destroy this game object
             Destroy(this.gameObject);
         }
+    }
+
+    private void OnDestroy()
+    {
+        //Remove self from pickups list in game manager
+        GameManager.instance.instantiatedPickUps.Remove(this.gameObject);
     }
 }
