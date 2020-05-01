@@ -199,6 +199,9 @@ public class GameManager : MonoBehaviour
 
     public GameObject RandomSpawnPoint(List<GameObject> spawnPoints)
     {
+        //seed the Random with the exact time
+        UnityEngine.Random.seed = DateToInt(DateTime.Now);
+
         //Get a random int along the list of spawn point indices
         int spawnToGet = UnityEngine.Random.Range(0, spawnPoints.Count - 1);
 
@@ -233,6 +236,7 @@ public class GameManager : MonoBehaviour
         //If the list of enemy prefabs is not empty
         if (enemyTankPrefabs.Count > 0)
         {
+
             for (int i = 0; i < enemyTankPrefabs.Count; i++)
             {
                 //Create a new enemy tank in the world from the list
@@ -244,5 +248,17 @@ public class GameManager : MonoBehaviour
         }
 
         
+    }
+
+    //Get date as integer
+    public int DateToInt(DateTime dateToUse)
+    {
+        //Return the exact time (down to the millisecond) added together
+        return dateToUse.Year +
+               dateToUse.Month +
+               dateToUse.Day +
+               dateToUse.Hour +
+               dateToUse.Minute +
+               dateToUse.Millisecond;
     }
 }

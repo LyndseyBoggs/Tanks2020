@@ -71,8 +71,11 @@ public class SampleAIControllerFinal : MonoBehaviour
         //Get and Set Territory from randomly generated room, if not pre-set
         if (!territory)
         {
+            //seed the Random with the exact time
+            UnityEngine.Random.seed = DateToInt(DateTime.Now);
+
             //Set Territory to a random territory from the level game object - map generator list of territories
-            territory = GameManager.instance.LevelGameObject.GetComponent<MapGenerator>().instantiatedTerritories[UnityEngine.Random.Range(0, GameManager.instance.LevelGameObject.GetComponent<MapGenerator>().instantiatedTerritories.Count)];
+            territory = GameManager.instance.LevelGameObject.GetComponent<MapGenerator>().instantiatedTerritories[UnityEngine.Random.Range(0, GameManager.instance.LevelGameObject.GetComponent<MapGenerator>().instantiatedTerritories.Count - 1)];
         }
 
         //Get and Set Waypoints array from territory, if waypoints array is null
@@ -842,5 +845,16 @@ public class SampleAIControllerFinal : MonoBehaviour
 
         }
     }
-    
+
+    //used to seed Unity.Random
+    public int DateToInt(DateTime dateToUse)
+    {
+        //Return the exact time (down to the millisecond) added together
+        return dateToUse.Year +
+               dateToUse.Month +
+               dateToUse.Day +
+               dateToUse.Hour +
+               dateToUse.Minute +
+               dateToUse.Millisecond;
+    }
 }
