@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class RoomTerritory : MonoBehaviour
 {
-    public bool isInvaded = false; // tracks if the player is currently in this territory
+    public Transform[] waypoints;           //Array of waypoint transforms to follow inside of this territory
+
+    public bool isInvaded = false;          //tracks if the player is currently in this territory
 
     private void OnTriggerEnter(Collider other)
     {

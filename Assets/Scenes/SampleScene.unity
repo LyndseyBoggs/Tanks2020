@@ -263,9 +263,10 @@ MonoBehaviour:
     type: 3}
   instantiatedEnemyTanks: []
   enemyTankPrefabs:
-  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
-  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
-  - {fileID: 3570684758881235111, guid: 1d69b3d4a07fa22448da3f067dd13457, type: 3}
+  - {fileID: 4537512365205254866, guid: 5eefdad4937bf5f4b8f9ffc51c029fdb, type: 3}
+  - {fileID: 6622483727545333984, guid: c402cf85d6ead5246bcbee3138a0322a, type: 3}
+  - {fileID: 4843675564803644610, guid: e34d215f108349e4bb727af54bb9a5f6, type: 3}
+  - {fileID: 4537512365205254866, guid: 31edea29127e6d146b8633dd632bbea5, type: 3}
   playerSpawnPoints: []
   enemySpawnPoints: []
   numberofPlayers: 0
