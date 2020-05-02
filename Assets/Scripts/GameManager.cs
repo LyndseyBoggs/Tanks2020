@@ -16,9 +16,10 @@ public class GameManager : MonoBehaviour
     public GameState currentGameState = GameState.MainMenu;    //Tracks the current Game State of the game, initialized to main menu
     public GameState previousGameState;                        //tracks the previous state of the game
 
-    public GameObject LevelGameObject;
-
-    public GameObject instantiatedPlayerTank;       //holds reference to Player tank
+    //Objects in Scene
+    public GameObject LevelGameObject;              //Map Generator Object
+    public GameObject instantiatedPlayerTank01;       //holds reference to Player 01 tank
+    public GameObject instantiatedPlayerTank02;       //holds reference to Player 02 tank
     public GameObject playerTankPrefab;             //the prefab we want to use to spawn the player
     public List<GameObject> instantiatedEnemyTanks; //list of all enemy tanks currently instantiated
     public List<GameObject> instantiatedPickUps;    //list of all pickups currently instantiated
@@ -26,13 +27,27 @@ public class GameManager : MonoBehaviour
     public List<GameObject> playerSpawnPoints;      //list of player spawn points
     public List<GameObject> enemySpawnPoints;       //list of enemy spawn points
 
-    public int highScore;           //stores highest score ever achieved in game
+    //Scores,  Prefs and Settings
+    public int highScore;               //stores highest score ever achieved in game
     public List<ScoreData> highScores;
+    public float fxVolume;              //
+    public float musicVolume;           //    
 
-    public float fxVolume;          //
-    public float musicVolume;       //
+    //Player variables
+    public int numberofPlayers;         //Set to 1 or 2 based on single or multiplayer choice
+    public float player01Score;
+    public float player02Score;
+    public int playerLivesStart = 3;
+    public int player01Lives;
+    public int player02Lives;
+    public bool isGameOver = false;
 
-    public int numberofPlayers;     //Set to 1 or 2 based on single or multiplayer choice
+    //UI Menues
+    public GameObject MainMenuObject;
+    public GameObject OptionsMenuObject;
+    public GameObject StartMenuObject;
+    public GameObject PausedMenuObject;
+    public GameObject GameOverMenuObject;
     
 
     // Runs before any Start() functions run
@@ -66,32 +81,77 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {        
-        //If the player tank does not exist (it has been destroyed)
-        if (instantiatedPlayerTank == null)
-        {
-            //TODO: If player lives > 0
-
+        //If the player 01 tank does not exist (it has been destroyed)
+        if (instantiatedPlayerTank01 == null)
+        {     
             //if the list of player spawn points is not empty
             if (playerSpawnPoints.Count != 0)
             {
-                //Spawn the player at a spawn point
-                SpawnPlayer(RandomSpawnPoint(playerSpawnPoints));
+                //If player 1 has lives remaining
+                if (player01Lives > 0)
+                {
+                    //Spawn the player at a spawn point
+                    SpawnPlayer(RandomSpawnPoint(playerSpawnPoints), 1);
+                }
+                
             }
-
             else
             {
-                //Debug.Log("Could not spawn the player at spawn point: Spawn point list is empty.");
+                //Debug.Log("Could not spawn player 1 at spawn point: Spawn point list is empty.");
+            }            
+        }
+        
+        //If in Two-Player mode
+        if (numberofPlayers == 2)
+        {
+            //If the player 02 tank does not exist (it has been destroyed)
+            if (instantiatedPlayerTank02 == null)
+            {
+                //if the list of player spawn points is not empty
+                if (playerSpawnPoints.Count != 0)
+                {
+                    //If player 1 has lives remaining
+                    if (player02Lives > 0)
+                    {
+                        //Spawn the player at a spawn point
+                        SpawnPlayer(RandomSpawnPoint(playerSpawnPoints), 2);
+                    }
+
+                }
+                else
+                {
+                    //Debug.Log("Could not spawn player 1 at spawn point: Spawn point list is empty.");
+                }
+            }
+        }
+
+        //Trigger game over
+        //If player 1 has died
+        if (player01Lives <= 0)
+        {
+            //And if in multiplayer mode
+            if (numberofPlayers == 2)
+            {
+                //And if player 2 has died
+                if (player02Lives <= 0)
+                {
+                    isGameOver = true;
+                }
+            }
+
+            //else in single player mode
+            else
+            {
+                isGameOver = true;
             }
             
         }
+        
     }
 
     //Change to a new AI state
     public void ChangeState(GameState newState)
-    {
-        //save time we changed states
-        //stateEnterTime = Time.time; //from ChangeState in SampleAIFinal.cs
-
+    {        
         //save current state to previous state
         previousGameState = currentGameState; // set previous game state
 
@@ -226,7 +286,7 @@ public class GameManager : MonoBehaviour
     }
 
     //Spawn the player at a spawn point
-    public void SpawnPlayer(GameObject spawnPoint)
+    public void SpawnPlayer(GameObject spawnPoint, int playerNumber)
     {
         //if we didn't pass a specific spawnpoint, pick a random one
         if (spawnPoint == null)
@@ -237,7 +297,28 @@ public class GameManager : MonoBehaviour
         //Spawn the player at that spawnpoint location
         if (playerTankPrefab != null)   //null check for playerTankPrefab
         {
-            instantiatedPlayerTank = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+            //If player 1 is passed in
+            if (playerNumber == 1)
+            {
+                //Spawn player 1 at spawn point
+                instantiatedPlayerTank01 = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+                
+                instantiatedPlayerTank01.GetComponent<TankData>().playerNumber = 1;                                //set player number to 1
+                instantiatedPlayerTank01.gameObject.name = "Player 01";                                            //name to "Player 01"  
+                instantiatedPlayerTank01.GetComponent<InputController>().input = InputController.InputScheme.WASD; //Set input scheme
+            }
+
+            //Else if player 2 is passed in
+            else if (playerNumber == 2)
+            {
+                //Spawn player 2 at spawn point
+                instantiatedPlayerTank02 = Instantiate(playerTankPrefab, spawnPoint.transform.position, Quaternion.identity);
+
+                instantiatedPlayerTank02.GetComponent<TankData>().playerNumber = 2;                                     //set player number to 2
+                instantiatedPlayerTank02.gameObject.name = "Player 02";                                                 //name to "Player 02"  
+                instantiatedPlayerTank02.GetComponent<InputController>().input = InputController.InputScheme.arrowKeys; //Set input scheme
+            }
+
         }
 
         else

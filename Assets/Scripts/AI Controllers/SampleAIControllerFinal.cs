@@ -9,6 +9,11 @@ using UnityEngine;
 
 public class SampleAIControllerFinal : MonoBehaviour
 {
+    public float AggroKillScore = 500;      //score to add for kiling Aggro tank
+    public float SwissKillScore = 400;      //score to add for kiling Swiss tank
+    public float BlindKillScore = 300;      //score to add for kiling Blind tank
+    public float CowardKillscore = 200;     //score to add for kiling Coward tank
+
     public enum Personalities { Aggro, Swiss, Blind, Coward}         //Tank Personities enum
     public Personalities personality = Personalities.Aggro;          //Designer-chosen personality of tank effects behavior in Update()
 
@@ -63,7 +68,7 @@ public class SampleAIControllerFinal : MonoBehaviour
         shooter = GetComponent<TankShooter>();
 
         //get reference to manager player (temporary until next milestone)
-        player = GameManager.instance.instantiatedPlayerTank;
+        player = GameManager.instance.instantiatedPlayerTank01;
 
         //Add self to GameManager list of enemies
         GameManager.instance.instantiatedEnemyTanks.Add(this.gameObject);
@@ -94,6 +99,41 @@ public class SampleAIControllerFinal : MonoBehaviour
 
     private void OnDestroy()
     {
+        float killScore = 0.0f; //kill score to add, initialized to zero
+        
+        //Grant score to shooter based on Ai Tank personality
+        switch (personality)
+        {
+            case Personalities.Aggro:
+                killScore = AggroKillScore;
+                break;
+            case Personalities.Blind:
+                killScore = BlindKillScore;
+                break;
+            case Personalities.Swiss:
+                killScore = SwissKillScore;
+                break;
+            case Personalities.Coward:
+                killScore = CowardKillscore;
+                break;
+            default:
+                killScore = 100;
+                Debug.Log("Generic 100pts earned on kill; personality type not factored to onDestroy");
+                break;
+        }
+
+        //if player 01 was the killer, increment points
+        if (data.lastShotBy == GameManager.instance.instantiatedPlayerTank01)
+        {
+            GameManager.instance.player01Score += killScore;
+        }
+
+        //if player 02 was the killer, increment points
+        if (data.lastShotBy == GameManager.instance.instantiatedPlayerTank02)
+        {
+            GameManager.instance.player02Score += killScore;
+        }
+
         //Remove self to GameManager list of enemies
         GameManager.instance.instantiatedEnemyTanks.Remove(this.gameObject);
     }
@@ -110,10 +150,10 @@ public class SampleAIControllerFinal : MonoBehaviour
     void Update()
     {
         //Testing
-        CanSee(GameManager.instance.instantiatedPlayerTank);
+        CanSee(GameManager.instance.instantiatedPlayerTank01);
         
         //Draw debug line to player (red if unseen, green if seen)
-        Debug.DrawLine(tf.position, GameManager.instance.instantiatedPlayerTank.transform.position, sightColor);
+        Debug.DrawLine(tf.position, GameManager.instance.instantiatedPlayerTank01.transform.position, sightColor);
 
         //If in avoidance state, do avoidance
         if (avoidanceStage != AvoidanceStage.None)
@@ -169,7 +209,7 @@ public class SampleAIControllerFinal : MonoBehaviour
         //use FOVAngle and inSightAngle
 
         //If distance to player is less than range distance, return true
-        if (Vector3.Distance(tf.position, GameManager.instance.instantiatedPlayerTank.transform.position) <= playerRangeDist)
+        if (Vector3.Distance(tf.position, GameManager.instance.instantiatedPlayerTank01.transform.position) <= playerRangeDist)
         {
             return true;
         }
@@ -564,7 +604,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---CHASE STATE---
             case AIState.Chase:
                 //Chase the player
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
 
                 //Check for transitions
                 //-----------------------------------
@@ -586,7 +626,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //--CHASE AND FIRE STATE---
             case AIState.ChaseAndFire:
                 //do state behaviors
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
                 Shoot();
 
                 //Check for transitions
@@ -623,7 +663,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---FLEE SATE---
             case AIState.Flee:
                 //Flee from player
-                Flee(GameManager.instance.instantiatedPlayerTank);
+                Flee(GameManager.instance.instantiatedPlayerTank01);
 
                 //wait "fleeTime" seconds then check for flee
                 if (Time.time >= (stateEnterTime + fleeTime))
@@ -668,12 +708,12 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---CHASE STATE---
             case AIState.Chase:
                 //Chase the player
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
 
                 //Check for transitions
                 //-----------------------------------
                 //If cannot hear player -> rest
-                if (!CanHear(GameManager.instance.instantiatedPlayerTank))
+                if (!CanHear(GameManager.instance.instantiatedPlayerTank01))
                 {
                     //rest
                     ChangeState(AIState.Rest);
@@ -690,7 +730,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //--CHASE AND FIRE STATE---
             case AIState.ChaseAndFire:
                 //do state behaviors
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
                 Shoot();
 
                 //Check for transitions
@@ -711,7 +751,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                 //Check for transitions
                 //-----------------------------------
                 //If player is heard, chase the player
-                if (CanHear(GameManager.instance.instantiatedPlayerTank))
+                if (CanHear(GameManager.instance.instantiatedPlayerTank01))
                 {
                     ChangeState(AIState.Chase);
                 }
@@ -742,7 +782,7 @@ public class SampleAIControllerFinal : MonoBehaviour
                 //Check for transitions
                 //-----------------------------------
                 //if shot by player, it's war
-                if (data.lastShotBy == GameManager.instance.instantiatedPlayerTank)
+                if (data.lastShotBy == GameManager.instance.instantiatedPlayerTank01)
                 {
                     //Chase the player
                     ChangeState(AIState.Chase);
@@ -753,7 +793,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---CHASE STATE---
             case AIState.Chase:
                 //Chase the player
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
 
                 //Check for transitions
                 //-----------------------------------
@@ -778,7 +818,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //--CHASE AND FIRE STATE---
             case AIState.ChaseAndFire:
                 //do state behaviors
-                Chase(GameManager.instance.instantiatedPlayerTank);
+                Chase(GameManager.instance.instantiatedPlayerTank01);
                 Shoot();
 
                 //Check for transitions
@@ -829,7 +869,7 @@ public class SampleAIControllerFinal : MonoBehaviour
             //---FLEE SATE---
             case AIState.Flee:
                 //Flee from player
-                Flee(GameManager.instance.instantiatedPlayerTank);
+                Flee(GameManager.instance.instantiatedPlayerTank01);
 
                 //wait "fleeTime" seconds then check for flee
                 if (Time.time >= (stateEnterTime + fleeTime))

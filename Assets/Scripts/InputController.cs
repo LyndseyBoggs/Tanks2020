@@ -40,13 +40,30 @@ public class InputController : MonoBehaviour
         //If the player is able to shoot
         if (data.canShoot)
         {
-            if (Input.GetKeyDown(KeyCode.Space)) //Will need to have a shoot button for each player
+            //WASD Player uses Spacebar
+            if (input == InputScheme.WASD)
             {
-                //Shoot
-                shooter.Shoot();
-                data.canShoot = false;
-                data.timeUntilCanShoot = data.fireRate;
+                if (Input.GetKeyDown(KeyCode.Space)) 
+                {
+                    //Shoot
+                    shooter.Shoot();
+                    data.canShoot = false;
+                    data.timeUntilCanShoot = data.fireRate;
+                }
             }
+
+            //Arrow keys player uses enter/return 
+            if (input == InputScheme.arrowKeys)
+            {
+                if (Input.GetKeyDown(KeyCode.Return))
+                {
+                    //Shoot
+                    shooter.Shoot();
+                    data.canShoot = false;
+                    data.timeUntilCanShoot = data.fireRate;
+                }
+            }
+            
         }
 
         if (data.timeUntilCanShoot > 0)

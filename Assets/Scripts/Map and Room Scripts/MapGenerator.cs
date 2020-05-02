@@ -64,8 +64,14 @@ public class MapGenerator : MonoBehaviour
         //Generate the grid on start
         GenerateGrid();
 
-        //Spawn Player
-        GameManager.instance.SpawnPlayer(GameManager.instance.RandomSpawnPoint(GameManager.instance.playerSpawnPoints));
+        //Spawn Player 1
+        GameManager.instance.SpawnPlayer(GameManager.instance.RandomSpawnPoint(GameManager.instance.playerSpawnPoints), 1);
+
+        //If in 2-player mode, spawn player 2
+        if (GameManager.instance.numberofPlayers == 2)
+        {
+            GameManager.instance.SpawnPlayer(GameManager.instance.RandomSpawnPoint(GameManager.instance.playerSpawnPoints), 2);
+        }
 
         //Spawn Enemies
         GameManager.instance.SpawnEnemies();

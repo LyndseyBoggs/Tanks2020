@@ -166,7 +166,8 @@ MonoBehaviour:
   currentGameState: 0
   previousGameState: 0
   LevelGameObject: {fileID: 0}
-  instantiatedPlayerTank: {fileID: 0}
+  instantiatedPlayerTank01: {fileID: 0}
+  instantiatedPlayerTank02: {fileID: 0}
   playerTankPrefab: {fileID: 2393371722937406956, guid: 302ee9fceb584654a9b1d7f6e07ee763,
     type: 3}
   instantiatedEnemyTanks: []
@@ -178,7 +179,61 @@ MonoBehaviour:
   - {fileID: 4537512365205254866, guid: 31edea29127e6d146b8633dd632bbea5, type: 3}
   playerSpawnPoints: []
   enemySpawnPoints: []
-  numberofPlayers: 0
+  highScore: 0
+  highScores: []
+  fxVolume: 0
+  musicVolume: 0
+  numberofPlayers: 2
+  player01Score: 0
+  player02Score: 0
+  playerLivesStart: 3
+  player01Lives: 0
+  player02Lives: 0
+  isGameOver: 0
+  MainMenuObject: {fileID: 0}
+  OptionsMenuObject: {fileID: 0}
+  StartMenuObject: {fileID: 0}
+  PausedMenuObject: {fileID: 0}
+  GameOverMenuObject: {fileID: 0}
+--- !u!1 &385839171
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 385839173}
+  - component: {fileID: 385839172}
+  m_Layer: 0
+  m_Name: AudioListener
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!81 &385839172
+AudioListener:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385839171}
+  m_Enabled: 1
+--- !u!4 &385839173
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 385839171}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 21.468973, y: -14.585875, z: 30.130445}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -280,7 +335,6 @@ GameObject:
   m_Component:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
-  - component: {fileID: 963194226}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -288,14 +342,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!81 &963194226
-AudioListener:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 963194225}
-  m_Enabled: 1
 --- !u!20 &963194227
 Camera:
   m_ObjectHideFlags: 0

@@ -21,7 +21,7 @@ public class TankData : MonoBehaviour
     public float healthRegenPerSec = 0.5f;
 
     public int score = 0;                  //Q: Can I make this an unsigned int to prevent it from dropping into the neg.?
-    public int playerNumber = 1;           //Is this player 1, or player 2?
+    public int playerNumber = 0;           //Is this player 1, or player 2? Initalized to 0 for the case of AI
     //TODO: Assign WASD or arrow keys based on player number 
 
     void Start()
@@ -46,6 +46,18 @@ public class TankData : MonoBehaviour
     //
     public void Die()
     {
+        //Deduct life from player 01 if player 1
+        if (playerNumber == 1)
+        {
+            GameManager.instance.player01Lives -= 1;
+        }
+
+        //Deduct life from player 02 if player 2
+        else if (playerNumber == 2)
+        {
+            GameManager.instance.player02Lives -= 1;
+        }
+        
         //This is what happens when the tank dies
         Destroy(this.gameObject);
     }

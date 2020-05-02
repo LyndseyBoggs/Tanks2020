@@ -113,5 +113,5 @@ MonoBehaviour:
     fireRateMod: -0.75
     duration: 15
     isPermanent: 0
-  feedbackAudioClip: {fileID: 0}
+  feedbackAudioClip: {fileID: 8300000, guid: 065036bd8fffb5e4882282e8b6e70fdf, type: 3}
   mySpawner: {fileID: 0}
