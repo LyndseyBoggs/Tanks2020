@@ -1,9 +1,13 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class UIManager : MonoBehaviour
 {
+
+    public Dropdown mapTypeDrop;    //dropdown for user-selected maptype
+
     public void ChangeState(string state)
     {
         switch (state)
@@ -32,5 +36,12 @@ public class UIManager : MonoBehaviour
         }
     }
 
+    public void SetMapType()
+    {
+        //Debug.Log(mapTypeDrop.options[mapTypeDrop.value].text);
+
+        //if (mapTypeDrop.options[mapTypeDrop.value].text == "abc")
+        
+    }
 
 }

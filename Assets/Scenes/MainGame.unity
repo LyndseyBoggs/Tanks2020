@@ -195,6 +195,19 @@ MonoBehaviour:
   StartMenuObject: {fileID: 796231156}
   PausedMenuObject: {fileID: 0}
   GameOverMenuObject: {fileID: 499104545}
+  UIManager: {fileID: 311348474}
+--- !u!114 &311348474 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 8010551485179528357, guid: e318785eded571942973f8ee9ae7ccc2,
+    type: 3}
+  m_PrefabInstance: {fileID: 975510933}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 73dbeb71a07007240a53dd86377e91bc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &385839171
 GameObject:
   m_ObjectHideFlags: 0

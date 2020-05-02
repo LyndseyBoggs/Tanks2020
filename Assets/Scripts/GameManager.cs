@@ -49,6 +49,7 @@ public class GameManager : MonoBehaviour
     public GameObject StartMenuObject;
     public GameObject PausedMenuObject;
     public GameObject GameOverMenuObject;
+    public UIManager UIManager;
     
 
     // Runs before any Start() functions run
@@ -143,8 +144,8 @@ public class GameManager : MonoBehaviour
         }
 
         //Trigger game over
-        //If player 1 has died
-        if (player01Lives <= 0)
+        //If the game is running and player 1 has died
+        if (!isGameOver && player01Lives <= 0)
         {
             //And if in multiplayer mode
             if (numberofPlayers == 2)
@@ -153,6 +154,7 @@ public class GameManager : MonoBehaviour
                 if (player02Lives <= 0)
                 {
                     isGameOver = true;
+                    ChangeState(GameState.GameOver);
                 }
             }
 
@@ -160,6 +162,7 @@ public class GameManager : MonoBehaviour
             else
             {
                 isGameOver = true;
+                ChangeState(GameState.GameOver);
             }
             
         }
@@ -226,7 +229,25 @@ public class GameManager : MonoBehaviour
                 }
 
                 if (newState == GameState.Gameplay)
-                {                    
+                {
+                    //Set selections from Start menu
+                    switch (UIManager.mapTypeDrop.options[UIManager.mapTypeDrop.value].text)
+                    {
+                        case "Map of the Day":
+                            LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.MapOfTheDay;
+                            break;
+                        case "Seeded":
+                            LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.Seeded;
+                            break;
+                        case "Random":
+                            LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.Random;
+                            break;
+                        default:
+                            Debug.Log("Spelling error in Map drop down caused default in GameState.StartMenu");
+                            break;
+                    }
+
+
                     //Load level, spawn players and enemies
                     LevelGameObject.GetComponent<MapGenerator>().StartGame();
                 }
