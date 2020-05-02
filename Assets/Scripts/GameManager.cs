@@ -237,7 +237,9 @@ public class GameManager : MonoBehaviour
                             LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.MapOfTheDay;
                             break;
                         case "Seeded":
-                            LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.Seeded;
+                            LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.Seeded;                            
+                            LevelGameObject.GetComponent<MapGenerator>().mapSeed = int.Parse(UIManager.mapSeedInput.text);                            
+
                             break;
                         case "Random":
                             LevelGameObject.GetComponent<MapGenerator>().mapType = MapGenerator.MapType.Random;

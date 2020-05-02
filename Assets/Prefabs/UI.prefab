@@ -2640,6 +2640,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mapTypeDrop: {fileID: 1279737849400423239}
+  mapSeedInput: {fileID: 4592514814316548205}
 --- !u!1 &812697995526687917
 GameObject:
   m_ObjectHideFlags: 0
