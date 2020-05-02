@@ -9,6 +9,7 @@ public class UIManager : MonoBehaviour
     public Dropdown mapTypeDrop;    //dropdown for user-selected maptype
     public InputField mapSeedInput;      //input field for map seed
 
+
     public void ChangeState(string state)
     {
         switch (state)
@@ -43,6 +44,19 @@ public class UIManager : MonoBehaviour
 
         //if (mapTypeDrop.options[mapTypeDrop.value].text == "abc")
         
+    }
+
+    public void SetPlayerNumber(int x)
+    {
+        if (x == 1)
+        {
+            GameManager.instance.numberofPlayers = 1;
+        }
+
+        else if (x == 2)
+        {
+            GameManager.instance.numberofPlayers = 2;
+        }
     }
 
 }

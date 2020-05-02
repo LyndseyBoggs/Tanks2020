@@ -230,7 +230,7 @@ public class GameManager : MonoBehaviour
 
                 if (newState == GameState.Gameplay)
                 {
-                    //Set selections from Start menu
+                    //Set maptype selections from Start menu
                     switch (UIManager.mapTypeDrop.options[UIManager.mapTypeDrop.value].text)
                     {
                         case "Map of the Day":
