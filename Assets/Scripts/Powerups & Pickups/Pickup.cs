@@ -41,8 +41,8 @@ public class Pickup : MonoBehaviour
             if (feedbackAudioClip != null)
             {
                 //Play feedback sound at location at volume
-                //TODO: Adjust volume based on settings
-                AudioSource.PlayClipAtPoint(feedbackAudioClip, tf.position, 1.0f);
+                AudioSource.PlayClipAtPoint(feedbackAudioClip, tf.position, GameManager.instance.fxVolume);
+                               
             }
 
             //set isSpawned in PickupSpawner

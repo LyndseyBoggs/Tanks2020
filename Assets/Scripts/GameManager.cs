@@ -30,8 +30,8 @@ public class GameManager : MonoBehaviour
     //Scores,  Prefs and Settings
     public int highScore;               //stores highest score ever achieved in game
     public List<ScoreData> highScores;
-    public float fxVolume;              //
-    public float musicVolume;           //    
+    public float fxVolume = 1.0f;              //
+    public float musicVolume = 1.0f;           //    
 
     //Player variables
     public int numberofPlayers;         //Set to 1 or 2 based on single or multiplayer choice
@@ -70,13 +70,17 @@ public class GameManager : MonoBehaviour
         DontDestroyOnLoad(gameObject);
     }
 
-    private void Start()
+    void Start()
     {
+        //Start with full lives
+        player01Lives = playerLivesStart;
+        player02Lives = playerLivesStart;
+        
         highScores = new List<ScoreData>(); //initialize high scores list
         LoadPrefs();
         highScores.Sort(); //sorts scores lowest to highest
         highScores.Reverse(); //flips to highest to lowest
-        highScores = highScores.GetRange(0, 5); //get top scores only
+        highScores = highScores.GetRange(0, 5); //get top scores only        
     }
 
     void Update()

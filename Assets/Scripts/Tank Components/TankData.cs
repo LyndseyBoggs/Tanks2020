@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class TankData : MonoBehaviour
 {
@@ -19,15 +20,21 @@ public class TankData : MonoBehaviour
     public float health; 
     public float maxHealth = 10;
     public float healthRegenPerSec = 0.5f;
-
-    public int score = 0;                  //Q: Can I make this an unsigned int to prevent it from dropping into the neg.?
+        
     public int playerNumber = 0;           //Is this player 1, or player 2? Initalized to 0 for the case of AI
-    //TODO: Assign WASD or arrow keys based on player number 
+    public Text ScoreCounter;              //Score text on this tank's camera
+    public Text LivesCounter;              //Lives text on this tank's camera
+
 
     void Start()
     {
         //Set health to max on start of game
         health = maxHealth; 
+    }
+
+    private void Update()
+    {
+        DisplayLivesAndScore();
     }
 
     //Note: We are putting this here for class, but might be better placed into a different script (TankMortality?)
@@ -41,6 +48,23 @@ public class TankData : MonoBehaviour
         {
             Die();
         }
+    }
+
+    //Display Updated Score
+    public void DisplayLivesAndScore()
+    {
+        if (playerNumber == 1)
+        {           
+            ScoreCounter.text = GameManager.instance.player01Score.ToString();
+            LivesCounter.text = GameManager.instance.player01Lives.ToString();
+        }
+
+        if (playerNumber == 2)
+        {
+            ScoreCounter.text = GameManager.instance.player02Score.ToString();
+            LivesCounter.text = GameManager.instance.player02Lives.ToString();
+        }
+
     }
 
     //
