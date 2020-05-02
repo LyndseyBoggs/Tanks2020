@@ -8,6 +8,8 @@ public class UIManager : MonoBehaviour
 
     public Dropdown mapTypeDrop;    //dropdown for user-selected maptype
     public InputField mapSeedInput;      //input field for map seed
+    public Slider musicSlider;
+    public Slider FXSlider;
 
 
     public void ChangeState(string state)

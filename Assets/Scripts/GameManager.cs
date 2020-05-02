@@ -199,7 +199,9 @@ public class GameManager : MonoBehaviour
                 break;
 
             case GameState.OptionsMenu:
-                //TODO: Save changes to options
+                //Save changes to options
+                GameManager.instance.musicVolume = UIManager.musicSlider.value;
+                GameManager.instance.fxVolume = UIManager.FXSlider.value;
 
                 //Deactivate options menu
                 OptionsMenuObject.SetActive(false);
