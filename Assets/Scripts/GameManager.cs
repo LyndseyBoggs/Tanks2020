@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = System.Random;
 
 public class GameManager : MonoBehaviour
@@ -76,15 +77,27 @@ public class GameManager : MonoBehaviour
         player01Lives = playerLivesStart;
         player02Lives = playerLivesStart;
         
+
         highScores = new List<ScoreData>(); //initialize high scores list
         LoadPrefs();
-        highScores.Sort(); //sorts scores lowest to highest
-        highScores.Reverse(); //flips to highest to lowest
-        highScores = highScores.GetRange(0, 5); //get top scores only        
+
+        if (highScores.Count > 0)
+        {
+            highScores.Sort(); //sorts scores lowest to highest
+            highScores.Reverse(); //flips to highest to lowest
+            highScores = highScores.GetRange(0, 5); //get top scores only 
+        }
+               
     }
 
     void Update()
-    {        
+    {
+        //cheat start
+        if (Input.GetKeyDown(KeyCode.Alpha1))
+        {
+            LevelGameObject.GetComponent<MapGenerator>().StartGame();
+        }
+        
         //If the player 01 tank does not exist (it has been destroyed)
         if (instantiatedPlayerTank01 == null)
         {     
@@ -152,6 +165,7 @@ public class GameManager : MonoBehaviour
         }
         
     }
+       
 
     //Change to a new AI state
     public void ChangeState(GameState newState)
@@ -159,55 +173,60 @@ public class GameManager : MonoBehaviour
         //save current state to previous state
         previousGameState = currentGameState; // set previous game state
 
-        //Change states
+        //Change states        
         switch (currentGameState)
         {               
 
             case GameState.MainMenu:
-                //disable input from main menu (better place for this is here, my idea
+                //Turn off main menu
+                MainMenuObject.SetActive(false);
 
                 if (newState == GameState.OptionsMenu)
                 {
-                    //Disable input from main menu
                     //Activate options menu
+                    OptionsMenuObject.SetActive(true);
                 }
 
                 if (newState == GameState.StartMenu)
                 {
-                    //Disable input from menu
                     //Activate Game Start Menu
+                    StartMenuObject.SetActive(true);
                 }
 
                 break;
 
             case GameState.OptionsMenu:
+                //TODO: Save changes to options
+
+                //Deactivate options menu
+                OptionsMenuObject.SetActive(false);
+
                 if (newState == GameState.MainMenu)
                 {
-                    //Save changes to options
-                    //Deactivate options menu
                     //reactivate main menu
+                    MainMenuObject.SetActive(true);
                 }
 
                 if (newState == GameState.Paused)
                 {
-                    //save changes to options
-                    //Deactivate options menu
                     //Activate pause menu
+                    PausedMenuObject.SetActive(true);
                 }
 
                 break;
 
             case GameState.StartMenu:
-                //
+                //Deactivate Start Menu
+                StartMenuObject.SetActive(false);
+
                 if (newState == GameState.MainMenu)
                 {
-                    //Deactivate Start Menu
                     //Activate Main Menu
+                    MainMenuObject.SetActive(true);
                 }
 
                 if (newState == GameState.Gameplay)
-                {
-                    //Deactiviate start menu
+                {                    
                     //Load level, spawn players and enemies
                     LevelGameObject.GetComponent<MapGenerator>().StartGame();
                 }
@@ -228,16 +247,19 @@ public class GameManager : MonoBehaviour
                     //save high score
                     //stop simulation (if desired)
                     //Restart Game button
+                    GameOverMenuObject.SetActive(true);
                 }
 
 
                 break;
 
             case GameState.Paused:
+                //Deactivate pause menu UI
+                PausedMenuObject.SetActive(false);
+
                 if (newState == GameState.Gameplay)
                 {
-                    //resume simulation
-                    //remove pause menu
+                    //resume simulation                    
                 }
 
                 if (newState == GameState.MainMenu)
@@ -247,22 +269,27 @@ public class GameManager : MonoBehaviour
 
                 if (newState == GameState.OptionsMenu)
                 {
-                    //Deactivate pause menu UI
                     //Activate options menu UI
+                    OptionsMenuObject.SetActive(true);
                 }
 
                 break;
 
             case GameState.GameOver:
+                //Deactivate Game Over
+                GameOverMenuObject.SetActive(false);
+
                 if (newState == GameState.Gameplay)
                 {
                     //Restart the game (end simulation & restart) (reload the gameplay scene)
+                    SceneManager.LoadScene("MainGame");
                 }
 
                 if (newState == GameState.MainMenu)
                 {
                     //Switch to main menu scene & end simulation
                     //Activate the main menu
+                    MainMenuObject.SetActive(true);
                 }
 
                 break;

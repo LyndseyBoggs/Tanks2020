@@ -22,6 +22,7 @@ public class MusicController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        //Set volume based on game manager
+        myMusic.volume = GameManager.instance.musicVolume;
     }
 }

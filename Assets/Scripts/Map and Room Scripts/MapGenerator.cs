@@ -28,9 +28,7 @@ public class MapGenerator : MonoBehaviour
     void Start()
     {
         //This is the level game object
-        GameManager.instance.LevelGameObject = this.gameObject;
-
-        StartGame();
+        GameManager.instance.LevelGameObject = this.gameObject;       
 
     }
 
